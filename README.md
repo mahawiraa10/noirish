@@ -43,7 +43,7 @@ npm install
 Duplikat file `.env.example` lalu ubah namanya menjadi `.env`:
 
 ```bash
-cp .env.example .env
+copy .env.example .env
 ```
 
 Buka file `.env` tersebut dan sesuaikan konfigurasi Database & Midtrans:
