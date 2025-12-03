@@ -99,7 +99,7 @@ php artisan serve
 npm run dev
 ```
 
-Website sekarang dapat diakses di: `http://127.0.0.1:8000` atau `(namaproject).test` apabila menggunakan Laragon
+Website sekarang dapat diakses di: `http://127.0.0.1:8000` atau `noirish.test` apabila menggunakan Laragon
 
 -----
 
