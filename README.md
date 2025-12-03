@@ -38,16 +38,16 @@ Lacak Pesanan: Fitur tracking order buat customer tanpa perlu login.
 3.  Atur Environment (.env)
     Duplikat file `.env.example` lalu ubah namanya menjadi `.env`:
     
-    **copy .env.example .env**
+    `**copy .env.example .env**`
     
     Buka file `.env` tersebut dan sesuaikan konfigurasi Database & Midtrans:
     
-    **DB_DATABASE=noirish**
-    **DB_USERNAME=root**
-    **DB_PASSWORD=**
+    `**DB_DATABASE=noirish**`
+    `**DB_USERNAME=root**`
+    `**DB_PASSWORD=**`
 
     Masukkan Server Key & Client Key dari Dashboard Midtrans Sandbox
-    **MIDTRANS_SERVER_KEY=masukkan_server_key_disini**
+    `**MIDTRANS_SERVER_KEY=masukkan_server_key_disini**`
     **MIDTRANS_CLIENT_KEY=masukkan_client_key_disini**
     **MIDTRANS_IS_PRODUCTION=false**
 
