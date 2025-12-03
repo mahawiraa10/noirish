@@ -1,0 +1,86 @@
+@import 'sweetalert2/dist/sweetalert2.min.css';
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+.swal2-html-container {
+    overflow-x: hidden !important;
+}
+
+/* ================================== */
+/* CSS UNTUK SEARCH BAR ANIMASI */
+/* ================================== */
+
+/* Kontainer utama search bar */
+.search-container form {
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
+/* Tombol Ikon Search (yang keliatan) */
+.search-btn {
+    position: absolute;
+    right: 0;
+    top: 0;
+    height: 100%;
+    padding: 0 4px; /* Kasih jarak dikit */
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    z-index: 10;
+    color: #475569; /* text-slate-600 */
+}
+.search-btn:hover {
+    color: #1e293b; /* text-slate-800 */
+}
+
+/* Input field (yang awalnya ngumpet) */
+.search-input {
+    width: 0;
+    opacity: 0;
+    padding: 8px 0;
+    border: none;
+    border-bottom: 2px solid #334155; /* border-slate-700 */
+    background: transparent;
+    /* Ini animasinya */
+    transition: width 0.4s ease, opacity 0.3s ease, padding 0.4s ease;
+    /* Pindahin padding kanan biar gak ketutupan ikon */
+    padding-right: 40px; 
+}
+
+/* Pas di-klik (dapetin class .active dari JS) */
+.search-container.active .search-input {
+    width: 250px; /* Lebar field pas kebuka */
+    opacity: 1;
+    padding-left: 10px;
+}
+
+/* Custom Styles for Login Page */
+.custom-input-field {
+    background-color: #ffffff !important;
+    color: #111827 !important;
+    border: 1px solid #d1d5db !important;
+    border-radius: 0.375rem;
+    padding: 0.625rem 0.75rem;
+    box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+    transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+}
+
+.custom-input-field:focus {
+    outline: none !important;
+    border-color: #64748b !important;
+    box-shadow: 0 0 0 3px rgba(100, 116, 139, 0.1) !important;
+    background-color: #ffffff !important;
+}
+
+.custom-button {
+    @apply inline-flex items-center px-4 py-2 bg-slate-700 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-slate-800 focus:bg-slate-800 active:bg-slate-900 focus:outline-none focus:ring-2 focus:ring-slate-500 focus:ring-offset-2 transition ease-in-out duration-150;
+    /* Contoh warna background yang lebih gelap */
+    background-color: #334155; /* Warna slate-700 */
+}
+
+.custom-button:hover {
+    background-color: #1e293b; /* Warna slate-900 saat hover */
+}
