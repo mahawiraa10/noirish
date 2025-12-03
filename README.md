@@ -117,4 +117,10 @@ Gunakan akun berikut untuk masuk ke sistem:
 
 Project ini open-source di bawah lisensi [MIT license](https://opensource.org/licenses/MIT).
 
-Gas bray, project lu bakal tampil profesional banget di GitHub\! 🚀
+## ⚠️ Disclaimer
+
+**Bahasa Indonesia:**
+Nama "Noirish" dalam proyek ini digunakan semata-mata untuk tujuan pendidikan, simulasi, dan portofolio pengembangan web. Apabila terdapat kesamaan nama, logo, atau branding dengan merek, produk, atau entitas perusahaan nyata, hal tersebut murni ketidaksengajaan (kebetulan) dan tidak bermaksud untuk melanggar hak cipta atau merek dagang pihak manapun. Proyek ini tidak berafiliasi dengan merek "Noirish" manapun yang mungkin ada di dunia nyata.
+
+**English:**
+The name "Noirish" in this project is used solely for educational, simulation, and web development portfolio purposes. Any resemblance to actual brands, products, or corporate entities is purely coincidental and unintended. No copyright or trademark infringement is intended. This project is not affiliated with any real-world "Noirish" brand that may exist.
