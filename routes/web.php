@@ -19,7 +19,6 @@ use App\Http\Controllers\ShipmentController;
 use App\Http\Controllers\ReturnRequestController;
 use App\Http\Controllers\StoreController;
 use App\Http\Controllers\TrackingController;
-// FaqController HAPUS AJA (Udah gak kepake)
 use App\Http\Controllers\WishlistController;
 use App\Http\Controllers\CartController;
 use App\Http\Controllers\ProductReviewController;
@@ -172,13 +171,13 @@ Route::prefix('admin')
         Route::get('/settings', [SettingsController::class, 'index'])->name('settings.index');
         Route::get('/export/sales-report', [OrderController::class, 'exportSalesCsv'])->name('export.sales');
         
-        // ADMIN FAQ ROUTE DIHAPUS (Karena udah gak pake database)
+      
         
         Route::post('/settings', [SettingsController::class, 'update'])->name('settings.update');
         Route::post('/logout', [AdminAuthController::class, 'logout'])->name('logout');
 
         // =========================================================================
-        // API SUMMARY DASHBOARD (UPDATE AJAX LOGIC JUGA)
+        // API SUMMARY DASHBOARD
         // =========================================================================
         Route::get('/dashboard/summary', function () {
             
@@ -265,7 +264,7 @@ Route::prefix('shop')->name('shop.')->group(function () {
     Route::get('/checkout', [StoreController::class, 'checkout'])->middleware(['auth', 'profile.complete'])->name('checkout');
     
     // ======================================================
-    // !! RUTE CHECKOUT (VERSI SANDBOX FIXED) !!
+    // !! RUTE CHECKOUT (VERSI SANDBOX)
     // ======================================================
     Route::post('/checkout', function (Request $request) {
        $cart = session('cart', []);
@@ -291,7 +290,7 @@ Route::prefix('shop')->name('shop.')->group(function () {
             Config::$isSanitized = true;
             Config::$is3ds = true;
 
-            // !! BYPASS SSL + FIX ERROR 10023 !!
+            
             \Midtrans\Config::$curlOptions[CURLOPT_SSL_VERIFYHOST] = 0;
             \Midtrans\Config::$curlOptions[CURLOPT_SSL_VERIFYPEER] = 0;
             
@@ -413,9 +412,7 @@ Route::prefix('shop')->name('shop.')->group(function () {
 Route::get('/track', [TrackingController::class, 'showTrackingForm'])->name('order.track.form');
 Route::post('/track', [TrackingController::class, 'trackOrder'])->name('order.track.submit');
 
-// ======================================================
-// !! FIX: RUTE FAQ HARDCODED (Langsung ke View) !!
-// ======================================================
+// Rute Halaman FAQ
 Route::view('/faq', 'faq')->name('faq.index'); 
 
 // ======================================================
