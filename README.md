@@ -47,7 +47,7 @@ Duplikat file `.env.example` lalu ubah namanya menjadi `.env`:
 copy .env.example .env
 ```
 
-Buka file `.env` tersebut dan sesuaikan konfigurasi Database & Midtrans:
+Buka file `.env` tersebut dan sesuaikan konfigurasi Database (nama database disesuaikan) & Midtrans:
 
 ```env
 DB_DATABASE=noirish
