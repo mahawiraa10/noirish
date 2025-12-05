@@ -3,7 +3,7 @@
 -   **Tampilan Modern**: Desain responsif menggunakan Tailwind CSS & Alpine.js.
 -   **Sistem Keranjang**: Kelola belanjaan dengan validasi stok otomatis.
 -   **Checkout & Pembayaran**: Terintegrasi dengan **Midtrans** (Bisa bayar pake QRIS, VA, E-Wallet, dll).
--   **Lacak Pesanan**: Fitur tracking order buat customer tanpa perlu login.
+-   **Lacak Pesanan**: Fitur tracking order untuk customer.
 -   **Dashboard Admin**:
     -   Laporan Penjualan Bulanan (Auto-reset setiap bulan).
     -   Metrik Pelanggan Aktif.
