@@ -9,7 +9,8 @@
     -   Metrik Pelanggan Aktif.
     -   Manajemen Produk, Kategori, dan Stok.
     -   Proses Order (Update Resi & Status).
--   **FAQ**: Halaman tanya jawab interaktif.
+-   **FAQ**: Halaman yang berisi pertanyaan dan jawaban yang sering ditanyakan.
+-   **Kontak**: Fitur chat dari customer yang dapat dibalas oleh Admin.
 
 ## 🛠 Teknologi yang Dipakai
 
