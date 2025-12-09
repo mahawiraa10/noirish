@@ -6,7 +6,6 @@
 <div class="bg-white shadow-lg rounded-lg overflow-hidden border border-gray-100">
     <div class="p-6 border-b border-gray-100 flex justify-between items-center bg-gray-50">
         <h2 class="text-xl font-bold text-gray-800">Orders List</h2>
-        <span class="text-xs font-bold px-2.5 py-1 rounded bg-slate-200 text-slate-700 uppercase tracking-wide">Live Data</span>
     </div>
 
     <div class="overflow-x-auto">

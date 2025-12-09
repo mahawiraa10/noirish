@@ -1,13 +1,3 @@
-Siap bray. Gua udah rapihin formatnya pake `code block` (tiga petik terbalik) buat semua perintah terminal dan kode, biar tampilannya di GitHub nanti **rapi dan gampang dibaca**, gak menyamping panjang kayak paragraf biasa.
-
-Ini konten **FULL** untuk file `README.md` lu. Langsung timpa semua isinya, save, terus push lagi ya\!
-
-````markdown
-# NOIRISH - Website Toko Online (E-Commerce)
-
-Noirish adalah aplikasi web e-commerce modern yang dibangun menggunakan framework Laravel. Website ini dilengkapi fitur belanja lengkap, sistem pembayaran otomatis (Midtrans), pelacakan resi, dan dashboard admin untuk pengelolaan toko.
-
-![Preview Noirish](https://via.placeholder.com/800x400?text=Preview+Website+Noirish)
 ## 🚀 Fitur Utama
 
 -   **Tampilan Modern**: Desain responsif menggunakan Tailwind CSS & Alpine.js.

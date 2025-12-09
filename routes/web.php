@@ -4,6 +4,7 @@ use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Str; 
 use Carbon\Carbon;
 
 // Import Controller
@@ -19,7 +20,6 @@ use App\Http\Controllers\ShipmentController;
 use App\Http\Controllers\ReturnRequestController;
 use App\Http\Controllers\StoreController;
 use App\Http\Controllers\TrackingController;
-// FaqController HAPUS AJA (Udah gak kepake)
 use App\Http\Controllers\WishlistController;
 use App\Http\Controllers\CartController;
 use App\Http\Controllers\ProductReviewController;
@@ -96,7 +96,7 @@ Route::prefix('admin')
     ->group(function () {
         
         // =========================================================================
-        // DASHBOARD ADMIN (LOGIC BARU: MONTHLY SALES & ACTIVE CUSTOMERS)
+        // DASHBOARD ADMIN (LOGIC: SALES & CRM INSIGHTS)
         // =========================================================================
         Route::get('/dashboard', function () {
             
@@ -104,12 +104,12 @@ Route::prefix('admin')
             $currentMonth = Carbon::now()->month;
             $currentYear = Carbon::now()->year;
             
-            // 1. Hitung MONTHLY SALES (Reset tiap bulan)
+            // 1. Hitung MONTHLY SALES
             $grossSales = DB::table('order_items')
                 ->join('orders', 'orders.id', '=', 'order_items.order_id')
                 ->whereIn('orders.status', $validStatuses)
-                ->whereMonth('orders.created_at', $currentMonth) // Filter Bulan Ini
-                ->whereYear('orders.created_at', $currentYear)   // Filter Tahun Ini
+                ->whereMonth('orders.created_at', $currentMonth)
+                ->whereYear('orders.created_at', $currentYear)
                 ->sum(DB::raw('order_items.price * order_items.quantity'));
 
             $totalRefunds = DB::table('orders')
@@ -120,36 +120,50 @@ Route::prefix('admin')
 
             $monthlySales = $grossSales - $totalRefunds;
 
-            // 2. Hitung ACTIVE CUSTOMERS (User unik yang belanja bulan ini)
+            // 2. Hitung ACTIVE CUSTOMERS
             $activeCustomers = DB::table('orders')
-                ->whereIn('status', $validStatuses) // Hanya hitung order valid
+                ->whereIn('status', $validStatuses)
                 ->whereMonth('created_at', $currentMonth)
                 ->whereYear('created_at', $currentYear)
-                ->distinct('customer_id') // Hitung per user, bukan per order
+                ->distinct('customer_id')
                 ->count('customer_id');
 
             // Data Statis Lainnya
             $totalProducts = App\Models\Product::count(); 
             $newCustomers = App\Models\User::where('role', 'user')->whereDate('created_at', today())->count();
             
-            // Top Products Bulan Ini
+            // Top Products & Category
             $topProductData = OrderItem::whereYear('created_at', $currentYear)->whereMonth('created_at', $currentMonth)->with('product')->select('product_id', DB::raw('SUM(quantity) as total_quantity'))->groupBy('product_id')->orderByDesc('total_quantity')->first();
             $topCategoryData = DB::table('order_items')->join('products', 'order_items.product_id', '=', 'products.id')->join('categories', 'products.category_id', '=', 'categories.id')->whereYear('order_items.created_at', $currentYear)->whereMonth('order_items.created_at', $currentMonth)->select('categories.name', DB::raw('SUM(order_items.quantity) as total_quantity'))->groupBy('categories.name')->orderByDesc('total_quantity')->first();
 
-            // Profile Admin
-            $currentUser = Auth::user();
-            $userProfile = $currentUser->profile;
+            // 3. CRM INSIGHTS (Hanya Gender & City)
+            $topGenderData = DB::table('profiles')
+                ->join('users', 'users.id', '=', 'profiles.user_id')
+                ->where('users.role', 'user')
+                ->select('profiles.gender', DB::raw('count(*) as total')) // Spesifik profiles.gender
+                ->groupBy('profiles.gender')
+                ->orderByDesc('total')
+                ->first();
+
+            $topCityData = DB::table('profiles')
+                ->join('users', 'users.id', '=', 'profiles.user_id')
+                ->where('users.role', 'user')
+                ->select('profiles.city', DB::raw('count(*) as total')) // Spesifik profiles.city
+                ->groupBy('profiles.city')
+                ->orderByDesc('total')
+                ->first();
 
             return view('admin.dashboard', [
-                'monthlySales' => $monthlySales,    // <-- Kirim data Sales Bulanan
-                'activeCustomers' => $activeCustomers, // <-- Kirim data Pelanggan Aktif
+                'monthlySales' => $monthlySales,
+                'activeCustomers' => $activeCustomers,
                 'totalProducts' => $totalProducts, 
                 'newCustomers' => $newCustomers,
                 'topProductName' => $topProductData ? $topProductData->product->name : 'N/A',
                 'topCategoryName' => $topCategoryData ? $topCategoryData->name : 'N/A',
-                'userGender' => $userProfile->gender ?? 'Not set',
-                'userCity' => $userProfile->city ?? 'Not set',
-                'userAddress' => $userProfile->address ?? 'Address not set',
+                
+                // Mengirim Data Insight Customer (Tanpa Address)
+                'userGender' => $topGenderData ? $topGenderData->gender . ' (Majority)' : 'N/A',
+                'userCity' => $topCityData ? $topCityData->city . ' (Top City)' : 'N/A',
             ]);
         })->name('dashboard');
 
@@ -172,13 +186,11 @@ Route::prefix('admin')
         Route::get('/settings', [SettingsController::class, 'index'])->name('settings.index');
         Route::get('/export/sales-report', [OrderController::class, 'exportSalesCsv'])->name('export.sales');
         
-        // ADMIN FAQ ROUTE DIHAPUS (Karena udah gak pake database)
-        
         Route::post('/settings', [SettingsController::class, 'update'])->name('settings.update');
         Route::post('/logout', [AdminAuthController::class, 'logout'])->name('logout');
 
         // =========================================================================
-        // API SUMMARY DASHBOARD (UPDATE AJAX LOGIC JUGA)
+        // API SUMMARY DASHBOARD
         // =========================================================================
         Route::get('/dashboard/summary', function () {
             
@@ -186,7 +198,7 @@ Route::prefix('admin')
             $currentMonth = Carbon::now()->month;
             $currentYear = Carbon::now()->year;
             
-            // 1. Sales Bulan Ini
+            // Sales
             $grossSales = DB::table('order_items')
                 ->join('orders', 'orders.id', '=', 'order_items.order_id')
                 ->whereIn('orders.status', $validStatuses)
@@ -202,7 +214,7 @@ Route::prefix('admin')
 
             $monthlySales = $grossSales - $totalRefunds;
             
-            // 2. Active Customers Bulan Ini
+            // Active Customers
             $activeCustomers = DB::table('orders')
                 ->whereIn('status', $validStatuses)
                 ->whereMonth('created_at', $currentMonth)
@@ -216,13 +228,35 @@ Route::prefix('admin')
             $topProductData = OrderItem::whereYear('order_items.created_at', $currentYear)->whereMonth('order_items.created_at', $currentMonth)->join('products', 'order_items.product_id', '=', 'products.id')->select('products.name', DB::raw('SUM(quantity) as total_quantity'))->groupBy('products.name')->orderByDesc('total_quantity')->first();
             $topCategoryData = DB::table('order_items')->join('products', 'order_items.product_id', '=', 'products.id')->join('categories', 'products.category_id', '=', 'categories.id')->whereYear('order_items.created_at', $currentYear)->whereMonth('order_items.created_at', $currentMonth)->select('categories.name', DB::raw('SUM(order_items.quantity) as total_quantity'))->groupBy('categories.name')->orderByDesc('total_quantity')->first();
             
+            // CRM INSIGHTS (Hanya Gender & City)
+            $topGenderData = DB::table('profiles')
+                ->join('users', 'users.id', '=', 'profiles.user_id')
+                ->where('users.role', 'user')
+                ->select('profiles.gender', DB::raw('count(*) as total'))
+                ->groupBy('profiles.gender')
+                ->orderByDesc('total')
+                ->first();
+
+            $topCityData = DB::table('profiles')
+                ->join('users', 'users.id', '=', 'profiles.user_id')
+                ->where('users.role', 'user')
+                ->select('profiles.city', DB::raw('count(*) as total'))
+                ->groupBy('profiles.city')
+                ->orderByDesc('total')
+                ->first();
+
+            // Address dihapus
+
             return response()->json([
-                'monthlySales' => $monthlySales,    // Kirim key baru
-                'activeCustomers' => $activeCustomers, // Kirim key baru
+                'monthlySales' => $monthlySales,
+                'activeCustomers' => $activeCustomers,
                 'totalProducts' => $totalProducts, 
                 'newCustomers' => $newCustomers,
                 'topProductName' => $topProductData ? $topProductData->name : 'N/A',
                 'topCategoryName' => $topCategoryData ? $topCategoryData->name : 'N/A',
+                // Data Demografi (Tanpa Address)
+                'userGender' => $topGenderData ? $topGenderData->gender . ' (Majority)' : 'N/A',
+                'userCity' => $topCityData ? $topCityData->city . ' (Top City)' : 'N/A',
             ]);
         })->name('dashboard.summary');
 
@@ -256,7 +290,6 @@ Route::post('/checkout/apply-coupon', [StoreController::class, 'applyCoupon'])
      ->middleware('auth')
      ->name('checkout.applyCoupon');
 
-// Halaman Statis
 Route::view('/privacy-policy', 'privacy-policy')->name('privacy-policy');
 Route::view('/terms-of-service', 'terms-of-service')->name('terms-of-service');
 
@@ -265,7 +298,7 @@ Route::prefix('shop')->name('shop.')->group(function () {
     Route::get('/checkout', [StoreController::class, 'checkout'])->middleware(['auth', 'profile.complete'])->name('checkout');
     
     // ======================================================
-    // !! RUTE CHECKOUT (VERSI SANDBOX FIXED) !!
+    // !! RUTE CHECKOUT (VERSI SANDBOX FIXED DENGAN ID NOIRISH) !!
     // ======================================================
     Route::post('/checkout', function (Request $request) {
        $cart = session('cart', []);
@@ -354,6 +387,7 @@ Route::prefix('shop')->name('shop.')->group(function () {
             $grandTotal = $subtotal + $shippingCost - $discountAmount;
             if ($grandTotal < 0) $grandTotal = 0;
 
+            // GENERATE ID UNIK NOIRISH
             $temp_order_id = 'NOIRISH-' . uniqid() . '-' . $user->id;
 
             DB::table('pending_checkouts')->insert([
@@ -413,9 +447,6 @@ Route::prefix('shop')->name('shop.')->group(function () {
 Route::get('/track', [TrackingController::class, 'showTrackingForm'])->name('order.track.form');
 Route::post('/track', [TrackingController::class, 'trackOrder'])->name('order.track.submit');
 
-// ======================================================
-// !! FIX: RUTE FAQ HARDCODED (Langsung ke View) !!
-// ======================================================
 Route::view('/faq', 'faq')->name('faq.index'); 
 
 // ======================================================

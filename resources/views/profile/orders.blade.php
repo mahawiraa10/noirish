@@ -110,7 +110,7 @@
                                     {{-- HEADER ORDER --}}
                                     <div class="flex flex-col sm:flex-row sm:items-start sm:justify-between">
                                         <div>
-                                            {{-- UBAH: Order ID jadi Tombol Klik untuk Struk --}}
+                                            {{-- Order ID jadi Tombol Klik untuk Struk --}}
                                             <button @click="openReceiptModal({{ json_encode($order) }})" 
                                                     class="text-sm font-bold text-blue-600 hover:text-blue-800 hover:underline flex items-center gap-1">
                                                 Order #{{ $order->id }}
@@ -187,14 +187,20 @@
                                                         </div>
                                                         
                                                         <div class="flex flex-col sm:items-end space-y-2 w-full sm:w-auto">
+                                                            {{-- 
+                                                                LOGIKA UTAMA:
+                                                                1. Jika sudah review => Tampilkan "Reviewed" (Tombol Return Hilang otomatis karena ada di blok 'else')
+                                                                2. Jika Belum ada Return ATAU Rejected ATAU (Approved & Type Return/Ganti Barang) => Tampilkan "Write a Review"
+                                                            --}}
                                                             @if ($hasReviewed)
                                                                 <span class="text-sm font-medium text-gray-400 italic flex items-center justify-end"><svg class="w-3 h-3 mr-1" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg> Reviewed</span>
-                                                            @elseif (!$returnRequest || $returnRequest->status == 'rejected')
+                                                            @elseif (!$returnRequest || $returnRequest->status == 'rejected' || ($returnRequest->status == 'approved' && $returnRequest->type == 'return'))
                                                                 <button @click="openReviewModal({{ $order }}, {{ $item }})" class="text-sm font-semibold text-blue-600 hover:text-blue-800 hover:underline">Write a Review</button>
                                                             @endif
 
                                                             @if ($returnRequest)
                                                                 <div class="text-right w-full">
+                                                                    {{-- Status Return Tetap Ditampilkan untuk Sejarah --}}
                                                                     <div class="text-xs flex justify-end items-center gap-2">
                                                                         <span class="text-gray-500 font-semibold">Return Status:</span>
                                                                         @if($returnRequest->status == 'pending')
@@ -225,7 +231,10 @@
                                                                     @endif
                                                                 </div>
                                                             @else
-                                                                <button @click="openReturnModal({{ $order }}, {{ $item }})" class="text-sm font-semibold text-red-600 hover:text-red-800 hover:underline">Request Return</button>
+                                                                {{-- TOMBOL RETURN: Hanya tampil jika belum review --}}
+                                                                @if (!$hasReviewed)
+                                                                    <button @click="openReturnModal({{ $order }}, {{ $item }})" class="text-sm font-semibold text-red-600 hover:text-red-800 hover:underline">Request Return</button>
+                                                                @endif
                                                             @endif
                                                         </div>
                                                     </li>
@@ -278,7 +287,6 @@
                             </div>
                             <div class="flex justify-between">
                                 <span class="text-gray-600">Date:</span>
-                                {{-- GANTI KE BAHASA INGGRIS (en-US) --}}
                                 <span class="font-medium text-slate-800" 
                                       x-text="receiptData ? new Date(receiptData.created_at).toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' }) : ''">
                                 </span>
@@ -305,19 +313,15 @@
                                     <template x-for="item in receiptData.items" :key="item.id">
                                         <li class="flex justify-between text-sm items-start">
                                             <div class="flex flex-col">
-                                                {{-- NAMA PRODUK --}}
                                                 <span class="font-bold text-slate-800" x-text="item.product ? item.product.name : 'Unknown Item'"></span>
                                                 
-                                                {{-- HARGA DI SAMPING QUANTITY --}}
                                                 <div class="text-xs text-gray-500 mt-0.5">
                                                     Qty: <span x-text="item.quantity"></span> 
                                                     &times; 
-                                                    {{-- Ambil 'item.price' langsung (Harga saat beli), bukan harga produk sekarang --}}
                                                     <span class="font-medium text-slate-700" x-text="'Rp ' + Number(item.price).toLocaleString('id-ID')"></span>
                                                 </div>
                                             </div>
                                             
-                                            {{-- SUBTOTAL PER ITEM (Kanan) --}}
                                             <span class="text-slate-800 font-bold" 
                                                   x-text="'Rp ' + Number(item.price * item.quantity).toLocaleString('id-ID')">
                                             </span>
@@ -390,7 +394,7 @@
             </div>
         </div>
         
-        {{-- MODAL RETUR (SAMA) --}}
+        {{-- MODAL RETUR --}}
         <div x-show="showReturnModal" @click.away="showReturnModal = false" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black bg-opacity-75" style="display: none;">
             <div @click.stop class="bg-white rounded-lg shadow-xl w-full max-w-lg p-6 border border-gray-200">
                 <div class="flex justify-between items-center mb-4 border-b pb-3">
@@ -406,8 +410,14 @@
                     <div class="mb-4">
                         <label class="block text-sm font-semibold text-gray-700 mb-2">Request Type:</label>
                         <div class="flex space-x-4">
-                            <label class="flex items-center cursor-pointer"><input type="radio" name="type" value="return" class="h-4 w-4 text-slate-600 border-gray-300 focus:ring-slate-500" checked><span class="ml-2 text-sm text-gray-700">Return (Get Replacement)</span></label>
-                            <label class="flex items-center cursor-pointer"><input type="radio" name="type" value="refund" class="h-4 w-4 text-slate-600 border-gray-300 focus:ring-slate-500"><span class="ml-2 text-sm text-gray-700">Refund (Get Money Back)</span></label>
+                            <label class="flex items-center cursor-pointer">
+                                <input type="radio" name="type" value="return" class="h-4 w-4 text-slate-600 border-gray-300 focus:ring-slate-500" checked>
+                                <span class="ml-2 text-sm text-black font-medium">Return (Get Replacement)</span>
+                            </label>
+                            <label class="flex items-center cursor-pointer">
+                                <input type="radio" name="type" value="refund" class="h-4 w-4 text-slate-600 border-gray-300 focus:ring-slate-500">
+                                <span class="ml-2 text-sm text-black font-medium">Refund (Get Money Back)</span>
+                            </label>
                         </div>
                     </div>
                     <div class="mb-4"><label for="reason" class="block text-sm font-semibold text-gray-700">Reason (Required):</label><textarea id="reason" name="reason" rows="4" class="mt-1 block w-full rounded-lg border-gray-300 shadow-sm focus:border-slate-500 focus:ring-slate-500 transition-colors" placeholder="Please describe the issue..." required></textarea></div>

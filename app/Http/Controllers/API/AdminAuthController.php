@@ -9,7 +9,7 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\ValidationException;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\RedirectResponse;
-use Illuminate\Support\Facades\Log; // <-- Tambahkan ini untuk debugging
+use Illuminate\Support\Facades\Log;
 
 class AdminAuthController extends Controller
 {
@@ -24,18 +24,18 @@ class AdminAuthController extends Controller
                 'name' => 'required|string|max:255',
                 'email' => 'required|string|email|max:255|unique:users',
                 'password' => 'required|string|min:8',
-                'role' => 'required|in:admin,user', // Pastikan role dicek
+                'role' => 'required|in:admin,user', 
             ]);
             
             // 2. Buat User di Database
             $user = User::create([
                 'name' => $request->name,
                 'email' => $request->email,
-                'password' => Hash::make($request->password), // Pakai Hash::make
-                'role' => $request->role, // Simpan role 'admin'
+                'password' => Hash::make($request->password), 
+                'role' => $request->role, 
             ]);
 
-            // 3. KEMBALIKAN RESPON JSON (FIX untuk body kosong di Postman)
+            // 3. KEMBALIKAN RESPON JSON
             return response()->json([
                 'message' => 'Account created successfully.',
                 'user' => [
@@ -44,17 +44,15 @@ class AdminAuthController extends Controller
                     'email' => $user->email,
                     'role' => $user->role,
                 ]
-            ], 201); // Status 201 CREATED
+            ], 201); 
 
         } catch (ValidationException $e) {
-            // Jika error validasi
             return response()->json([
                 'message' => 'Validation failed.',
                 'errors' => $e->errors()
             ], 422);
             
         } catch (\Exception $e) {
-            // Jika error database/server
             Log::error('Admin Register API Failed: ' . $e->getMessage());
             return response()->json([
                 'message' => 'Server error during registration.',
@@ -63,9 +61,6 @@ class AdminAuthController extends Controller
         }
     }
 
-    /**
-     * FUNGSI LOGIN-NYA KITA GANTI TOTAL (Untuk WEB FORM)
-     */
     public function login(Request $request): RedirectResponse
     {
         $request->validate([
@@ -75,7 +70,8 @@ class AdminAuthController extends Controller
 
         if (Auth::attempt(['email' => $request->email, 'password' => $request->password, 'role' => 'admin'])) {
             $request->session()->regenerate();
-            return redirect()->intended(route('admin.dashboard')); 
+            
+            return redirect()->route('admin.dashboard'); 
         }
 
         throw ValidationException::withMessages([
@@ -84,7 +80,7 @@ class AdminAuthController extends Controller
     }
 
     /**
-     * FUNGSI LOGOUT-NYA JUGA KITA GANTI (Untuk WEB FORM)
+     * FUNGSI LOGOUT
      */
     public function logout(Request $request): RedirectResponse
     {
@@ -97,6 +93,6 @@ class AdminAuthController extends Controller
 
     public function profile(Request $request)
     {
-        // ... (kode profile lo biarin aja)
+        // ...
     }
 }

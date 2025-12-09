@@ -18,9 +18,9 @@ class AdminSeeder extends Seeder
             ['email' => 'admin@example.com'], 
             [
                 'name' => 'Super Admin',
-                'password' => Hash::make('password'), // Password default: password
-                'role' => 'admin', // PENTING: Role diset ke admin
-                'email_verified_at' => now(), // Biar langsung verified
+                'password' => Hash::make('password'),
+                'role' => 'admin',
+                'email_verified_at' => now(),
             ]
         );
     }
