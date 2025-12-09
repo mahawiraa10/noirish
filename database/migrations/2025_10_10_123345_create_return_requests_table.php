@@ -18,7 +18,7 @@ return new class extends Migration
         $table->foreignId('user_id')->constrained('users')->onDelete('cascade');
         $table->enum('type', ['return', 'refund']);
         $table->string('reason');
-        $table->enum('status', ['pending', 'accepted', 'rejected'])->default('pending');
+        $table->enum('status', ['pending', 'approved', 'rejected'])->default('pending');
         $table->timestamps();
     });
 

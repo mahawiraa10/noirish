@@ -411,17 +411,17 @@
                         <label class="block text-sm font-semibold text-gray-700 mb-2">Request Type:</label>
                         <div class="flex space-x-4">
                             <label class="flex items-center cursor-pointer">
-                                <input type="radio" name="type" value="return" class="h-4 w-4 text-slate-600 border-gray-300 focus:ring-slate-500" checked>
+                                <input type="radio" name="type" value="return" class="h-4 w-4 text-black border-gray-300 focus:ring-black" checked>
                                 <span class="ml-2 text-sm text-black font-medium">Return (Get Replacement)</span>
                             </label>
                             <label class="flex items-center cursor-pointer">
-                                <input type="radio" name="type" value="refund" class="h-4 w-4 text-slate-600 border-gray-300 focus:ring-slate-500">
+                                <input type="radio" name="type" value="refund" class="h-4 w-4 text-black border-gray-300 focus:ring-black">
                                 <span class="ml-2 text-sm text-black font-medium">Refund (Get Money Back)</span>
                             </label>
                         </div>
                     </div>
-                    <div class="mb-4"><label for="reason" class="block text-sm font-semibold text-gray-700">Reason (Required):</label><textarea id="reason" name="reason" rows="4" class="mt-1 block w-full rounded-lg border-gray-300 shadow-sm focus:border-slate-500 focus:ring-slate-500 transition-colors" placeholder="Please describe the issue..." required></textarea></div>
-                    <div class="mb-4"><label for="return_images" class="block text-sm font-semibold text-gray-700">Upload Evidence (Optional):</label><input type="file" name="images[]" id="return_images" multiple accept="image/png, image/jpeg, image/webp" class="mt-1 block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-slate-50 file:text-slate-700 hover:file:bg-slate-100 transition-colors"></div>
+                    <div class="mb-4"><label for="reason" class="block text-sm font-semibold text-black">Reason (Required):</label><textarea id="reason" name="reason" rows="4" class="mt-1 block w-full rounded-lg border-gray-300 shadow-sm focus:border-slate-500 focus:ring-slate-500 transition-colors" placeholder="Please describe the issue..." required></textarea></div>
+                    <div class="mb-4"><label for="return_images" class="block text-sm font-semibold text-black">Upload Evidence (Optional):</label><input type="file" name="images[]" id="return_images" multiple accept="image/png, image/jpeg, image/webp" class="mt-1 block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-slate-50 file:text-slate-700 hover:file:bg-slate-100 transition-colors"></div>
                     <div class="mt-6 flex justify-end"><button type="button" @click="showReturnModal = false" class="bg-white border border-gray-300 text-gray-700 px-4 py-2 rounded-lg font-semibold mr-2 hover:bg-gray-50 transition">Cancel</button><button type="submit" class="inline-block border border-black text-black px-12 py-3 rounded-full font-bold hover:bg-black hover:text-white transition duration-300 text-xs uppercase tracking-widest">Submit Request</button></div>
                 </form>
             </div>
