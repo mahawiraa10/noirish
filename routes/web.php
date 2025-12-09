@@ -324,7 +324,7 @@ Route::prefix('shop')->name('shop.')->group(function () {
             Config::$isSanitized = true;
             Config::$is3ds = true;
 
-            // !! BYPASS SSL + FIX ERROR 10023 !!
+            
             \Midtrans\Config::$curlOptions[CURLOPT_SSL_VERIFYHOST] = 0;
             \Midtrans\Config::$curlOptions[CURLOPT_SSL_VERIFYPEER] = 0;
             

@@ -112,10 +112,6 @@ Gunakan akun berikut untuk masuk ke sistem:
   - **Email**: admin@noirish.com
   - **Password**: password
 
-**Akun User:**
-
-  - **Email**: user@noirish.com
-  - **Password**: password
 
 ## 📄 Lisensi
 
