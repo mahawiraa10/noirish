@@ -11,9 +11,9 @@
     -   Proses Order (Update Resi & Status).
 -   **FAQ**: Halaman tanya jawab interaktif.
 
-## 🛠 Teknologi yang Dipakai
+## Teknologi yang Dipakai
 
--   **Backend**: Laravel 10/11
+-   **Backend**: Laravel 12
 -   **Frontend**: Blade Templates, Tailwind CSS, Alpine.js
 -   **Database**: MySQL
 -   **Payment Gateway**: Midtrans Snap
@@ -23,7 +23,7 @@
 Ikuti langkah-langkah berikut secara berurutan:
 
 ### 1. Clone Repository
-Download source code-nya ke komputer lu:
+Download source code-nya ke komputer anda:
 ```bash
 git clone [https://github.com/mahawiraa10/noirish.git](https://github.com/mahawiraa10/noirish.git)
 cd noirish
@@ -69,7 +69,7 @@ php artisan key:generate
 
 ### 5. Setup Database
 
-Pastikan lu sudah membuat database kosong bernama `noirish` di MySQL, lalu jalankan perintah ini untuk mengisi tabel dan data awal:
+Pastikan anda sudah membuat database kosong bernama `noirish` di MySQL, lalu jalankan perintah ini untuk mengisi tabel dan data awal:
 
 ```bash
 php artisan migrate:fresh --seed
