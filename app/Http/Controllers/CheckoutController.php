@@ -5,9 +5,9 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Log; // Pastikan ini ada
+use Illuminate\Support\Facades\Log;
 use App\Models\Order;
-use App\Models\OrderItem; // Pastikan kamu punya model ini
+use App\Models\OrderItem;
 use App\Models\ProductVariant;
 use Midtrans\Config;
 use Midtrans\Snap;
@@ -27,7 +27,7 @@ class CheckoutController extends Controller
     }
 
     /**
-     * Ini adalah FUNGSI UTAMA yang dipanggil oleh JavaScript
+     * FUNGSI UTAMA yang dipanggil oleh JavaScript
      * saat tombol "Continue to Payment" diklik.
      */
     public function store(Request $request)
@@ -77,11 +77,10 @@ class CheckoutController extends Controller
                 $total += $currentPrice * $item['quantity'];
 
                 // Siapkan detail item untuk Midtrans
-                // 🔧 FIX: Cast price ke integer
                 $item_details_midtrans[] = [
-                    'id' => (string) $variant->id, // Cast ke string untuk keamanan
-                    'price' => (int) $currentPrice, // ✅ CAST KE INTEGER
-                    'quantity' => (int) $item['quantity'], // Cast ke integer
+                    'id' => (string) $variant->id,
+                    'price' => (int) $currentPrice,
+                    'quantity' => (int) $item['quantity'],
                     'name' => $variant->product->name . ' (' . $variant->size . ')',
                 ];
             }
@@ -92,11 +91,9 @@ class CheckoutController extends Controller
                 'order_date' => now(),
                 'total' => $total,
                 'status' => 'pending_payment', // Status awal
-                // 'payment_method' => $paymentMethod, // (jika kamu punya kolomnya)
             ]);
 
-            // 5. Buat Order Items
-            // (TAPI TANPA MENGURANGI STOK!)
+            // 5. Buat Order Items (TANPA MENGURANGI STOK!)
             foreach ($cart as $cartId => $item) {
                 $variant = $variants->get($item['variant_id']);
                 
@@ -111,23 +108,18 @@ class CheckoutController extends Controller
             // 6. Proses Pembayaran
             if ($paymentMethod == 'midtrans') {
                 
-                // ===================================
-                // LOGIKA MIDTRANS
-                // ===================================
-                
                 // Siapkan info customer
                 $customer_details = [
                     'first_name' => $user->name,
                     'email' => $user->email,
-                    'phone' => $user->profile->phone ?? 'N/A', // Asumsi dari profile
+                    'phone' => $user->profile->phone ?? 'N/A',
                 ];
 
                 // Gabungkan semua parameter
-                // 🔧 FIX: Cast gross_amount ke integer
                 $params = [
                     'transaction_details' => [
-                        'order_id' => (string) $order->id, // Cast ke string untuk keamanan
-                        'gross_amount' => (int) $order->total, // ✅ CAST KE INTEGER
+                        'order_id' => (string) $order->id,
+                        'gross_amount' => (int) $order->total,
                     ],
                     'item_details' => $item_details_midtrans,
                     'customer_details' => $customer_details,
@@ -145,16 +137,11 @@ class CheckoutController extends Controller
 
             } else {
                 
-                // ===================================
-                // LOGIKA BANK TRANSFER (MANUAL)
-                // ===================================
-                
                 DB::commit();
                 session()->forget('cart');
 
                 // 8. Kembalikan REDIRECT ke JavaScript
                 return response()->json([
-                    // Ganti 'home' ke halaman sukses bank transfer kamu
                     'redirect' => route('home') 
                 ]);
             }
@@ -162,7 +149,7 @@ class CheckoutController extends Controller
         } catch (\Exception $e) {
             // 9. Jika Gagal, Batalkan Transaksi
             DB::rollBack();
-            Log::error("Checkout Error: " . $e->getMessage()); // Catat error
+            Log::error("Checkout Error: " . $e->getMessage());
             return response()->json(['message' => 'Order failed: ' . $e->getMessage()], 500);
         }
     }
@@ -174,82 +161,140 @@ class CheckoutController extends Controller
      */
     public function handleWebhook(Request $request)
     {
-        // 1. Terima notifikasi
-        $payload = $request->all();
-        $orderId = $payload['order_id'];
-        $statusCode = $payload['status_code'];
-        $grossAmount = $payload['gross_amount'];
-        
-        // 2. Verifikasi signature key
-        $signature = hash('sha512', $orderId . $statusCode . $grossAmount . config('midtrans.server_key'));
-        if ($signature !== $payload['signature_key']) {
-            Log::warning("Invalid Webhook Signature for Order ID: {$orderId}");
-            return response()->json(['message' => 'Invalid signature'], 403);
-        }
-
-        // 3. Cari order di database
-        $order = Order::find($orderId);
-        if (!$order) {
-            Log::warning("Webhook Error: Order not found for Order ID: {$orderId}");
-            return response()->json(['message' => 'Order not found'], 404);
-        }
-
-        // 4. Update status order DAN kurangi stok
-        DB::beginTransaction();
         try {
-            // Cek status transaksi dari Midtrans
-            $transactionStatus = $payload['transaction_status'];
+            // 1. Log semua payload untuk debugging
+            Log::info('===== MIDTRANS WEBHOOK RECEIVED =====');
+            Log::info('Payload:', $request->all());
             
-            if ($transactionStatus == 'capture' || $transactionStatus == 'settlement') {
-                
-                // Hanya update jika statusnya masih pending_payment
-                if ($order->status == 'pending_payment') {
-                    
-                    // A. UPDATE STATUS ORDER
-                    $order->update(['status' => 'paid']); // Atau 'processing'
-
-                    // B. KURANGI STOK (HANYA DI SINI!)
-                    foreach ($order->items as $item) {
-                        // Ambil varian TERKUNCI untuk update stok
-                        $variant = ProductVariant::lockForUpdate()->find($item->product_variant_id);
-                        
-                        if ($variant && $variant->stock >= $item->quantity) {
-                            $variant->decrement('stock', $item->quantity);
-                        } else if ($variant) {
-                            // Stok tidak cukup, ini masalah!
-                            throw new \Exception("Failed to reduce stock for variant {$variant->id}: Not enough stock.");
-                        } else {
-                            // Varian tidak ditemukan
-                            throw new \Exception("Failed to reduce stock: Variant {$item->product_variant_id} not found.");
-                        }
-                    }
-                    
-                    DB::commit();
-                } else {
-                    // Status sudah diupdate (misal 'paid'), tidak perlu error, lewati saja
-                    DB::commit();
-                }
-            } else if (in_array($transactionStatus, ['expire', 'cancel', 'deny'])) {
-                
-                // (Opsional) Update status jadi 'failed' atau 'cancelled'
-                if ($order->status == 'pending_payment') {
-                    $order->update(['status' => 'failed']);
-                    DB::commit();
-                } else {
-                    DB::commit();
-                }
-            } else {
-                // Status lain (pending, dll) tidak perlu diapa-apain
-                DB::commit();
+            // 2. Terima notifikasi
+            $payload = $request->all();
+            $orderId = $payload['order_id'];
+            $statusCode = $payload['status_code'];
+            $grossAmount = $payload['gross_amount'];
+            $transactionStatus = $payload['transaction_status'];
+            $fraudStatus = $payload['fraud_status'] ?? null;
+            
+            Log::info("Processing Order ID: {$orderId}");
+            Log::info("Transaction Status: {$transactionStatus}");
+            
+            // 3. Verifikasi signature key
+            $signature = hash('sha512', $orderId . $statusCode . $grossAmount . config('midtrans.server_key'));
+            if ($signature !== $payload['signature_key']) {
+                Log::warning("Invalid Webhook Signature for Order ID: {$orderId}");
+                return response()->json(['message' => 'Invalid signature'], 403);
             }
 
-            return response()->json(['status' => 'ok']);
+            // 4. Cari order di database - FIX: Gunakan ID yang benar
+            $order = Order::where('id', $orderId)->first();
+            
+            if (!$order) {
+                Log::error("Webhook Error: Order not found for Order ID: {$orderId}");
+                return response()->json(['message' => 'Order not found'], 404);
+            }
+            
+            Log::info("Order found. Current status: {$order->status}");
+
+            // 5. Update status order DAN kurangi stok
+            DB::beginTransaction();
+            
+            try {
+                // Handle berdasarkan transaction status
+                if (in_array($transactionStatus, ['capture', 'settlement'])) {
+                    
+                    // Untuk capture, cek fraud status juga
+                    if ($transactionStatus == 'capture') {
+                        if ($fraudStatus == 'accept') {
+                            $this->processSuccessfulPayment($order);
+                        } else {
+                            Log::warning("Capture with fraud status: {$fraudStatus} for Order: {$orderId}");
+                        }
+                    } 
+                    // Untuk settlement, langsung proses
+                    else if ($transactionStatus == 'settlement') {
+                        $this->processSuccessfulPayment($order);
+                    }
+                    
+                } else if (in_array($transactionStatus, ['expire', 'cancel', 'deny'])) {
+                    
+                    // Update status jadi failed/cancelled jika masih pending
+                    if ($order->status == 'pending_payment') {
+                        $order->update(['status' => 'failed']);
+                        Log::info("Order {$orderId} marked as failed due to: {$transactionStatus}");
+                    }
+                    
+                } else if ($transactionStatus == 'pending') {
+                    // Status pending, tidak perlu action
+                    Log::info("Order {$orderId} is still pending");
+                }
+
+                DB::commit();
+                Log::info("Webhook processed successfully for Order: {$orderId}");
+                
+                return response()->json(['status' => 'ok'], 200);
+
+            } catch (\Exception $e) {
+                DB::rollBack();
+                Log::error("Database transaction error for Order {$orderId}: " . $e->getMessage());
+                Log::error("Stack trace: " . $e->getTraceAsString());
+                throw $e; // Re-throw untuk di-catch di outer try-catch
+            }
 
         } catch (\Exception $e) {
-            DB::rollBack();
-            // Catat error ke log
-            Log::error("Webhook error for Order ID {$orderId}: " . $e->getMessage());
-            return response()->json(['message' => 'Webhook error: ' . $e->getMessage()], 500);
+            Log::error('===== WEBHOOK ERROR =====');
+            Log::error('Error Message: ' . $e->getMessage());
+            Log::error('File: ' . $e->getFile());
+            Log::error('Line: ' . $e->getLine());
+            Log::error('Stack Trace: ' . $e->getTraceAsString());
+            
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Internal server error'
+            ], 500);
         }
+    }
+
+    /**
+     * Helper function untuk proses payment yang berhasil
+     */
+    private function processSuccessfulPayment(Order $order)
+    {
+        // Hanya proses jika statusnya masih pending_payment
+        if ($order->status != 'pending_payment') {
+            Log::info("Order {$order->id} already processed. Current status: {$order->status}");
+            return;
+        }
+        
+        Log::info("Processing successful payment for Order: {$order->id}");
+        
+        // A. UPDATE STATUS ORDER
+        $order->update(['status' => 'paid']);
+        Log::info("Order {$order->id} status updated to 'paid'");
+
+        // B. KURANGI STOK
+        foreach ($order->items as $item) {
+            Log::info("Processing item: Product Variant ID {$item->product_variant_id}, Quantity: {$item->quantity}");
+            
+            // Ambil varian TERKUNCI untuk update stok
+            $variant = ProductVariant::lockForUpdate()->find($item->product_variant_id);
+            
+            if (!$variant) {
+                Log::error("Variant not found: {$item->product_variant_id}");
+                throw new \Exception("Failed to reduce stock: Variant {$item->product_variant_id} not found.");
+            }
+            
+            if ($variant->stock < $item->quantity) {
+                Log::error("Insufficient stock for variant {$variant->id}. Available: {$variant->stock}, Requested: {$item->quantity}");
+                throw new \Exception("Failed to reduce stock for variant {$variant->id}: Not enough stock. Available: {$variant->stock}, Requested: {$item->quantity}");
+            }
+            
+            // Kurangi stok
+            $oldStock = $variant->stock;
+            $variant->decrement('stock', $item->quantity);
+            $newStock = $variant->fresh()->stock;
+            
+            Log::info("Stock reduced for variant {$variant->id}: {$oldStock} -> {$newStock}");
+        }
+        
+        Log::info("All items processed successfully for Order: {$order->id}");
     }
 }

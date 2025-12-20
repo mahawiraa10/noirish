@@ -94,7 +94,6 @@ class ReturnRequestController extends Controller
         $validated = $request->validate([
             'status' => 'required|in:pending,approved,rejected',
             'admin_response' => 'nullable|string',
-            // [BARU] Tambahan validasi untuk status pengiriman replacement
             'delivery_status' => 'nullable|in:pending,shipped,delivered'
         ]);
 

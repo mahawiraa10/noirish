@@ -12,7 +12,6 @@ class CartController extends Controller
      */
     public function index()
     {
-        // (Tidak ada perubahan di sini, fungsi index() Anda sudah bagus)
         $cart = session('cart', []);
         $productIds = array_column($cart, 'product_id');
         $products = Product::whereIn('id', $productIds)->get()->keyBy('id');
@@ -47,14 +46,14 @@ class CartController extends Controller
 
     /**
      * Menambahkan produk ke keranjang (via AJAX).
-     * !! FUNGSI INI DIUBAH TOTAL !!
+     * 
      */
     public function add(Request $request, Product $product)
     {
         // 1. Validasi input dasar
         $validated = $request->validate([
             'quantity' => 'required|integer|min:1',
-            'size' => 'required|string', // Validasi 'size' tidak lagi statis
+            'size' => 'required|string',
         ]);
 
         // 2. Cari varian produk yang spesifik
@@ -131,7 +130,7 @@ class CartController extends Controller
             return response()->json(['status' => 'error', 'message' => 'Not enough stock.'], 422);
         }
 
-        // 4. !! INI BEDANYA: HAPUS KERANJANG LAMA !!
+        // 4. HAPUS KERANJANG LAMA !!
         session()->forget('cart');
 
         // 5. Buat item keranjang baru
@@ -163,7 +162,6 @@ class CartController extends Controller
      */
     public function remove(Request $request)
     {
-        // (Tidak ada perubahan di sini, fungsi remove() Anda sudah bagus)
         $request->validate(['cart_id' => 'required|string']);
         $cartId = $request->cart_id;
         $cart = session('cart', []);

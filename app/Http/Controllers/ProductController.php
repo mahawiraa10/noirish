@@ -4,7 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Product;
 use App\Models\Category;
-use App\Models\ProductImage; // <-- TAMBAHKAN INI
+use App\Models\ProductImage;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Log;
@@ -171,8 +171,6 @@ class ProductController extends Controller
         // Hapus Semua Gambar Galeri
         foreach ($product->images as $image) {
             Storage::disk('public')->delete($image->image_path);
-            // Model record akan terhapus otomatis by cascade (jika di-setting)
-            // atau hapus manual: $image->delete();
         }
 
         $product->delete();

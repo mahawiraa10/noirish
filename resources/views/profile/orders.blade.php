@@ -18,7 +18,7 @@
             rating: 0, 
             comment: '',
             
-            // Fungsi Buka Modal Review
+            // Open Review Modal
             openReviewModal(order, item) {
                 this.currentProduct = item.product;
                 this.currentOrder = order;
@@ -28,7 +28,7 @@
                 this.showReviewModal = true;
             },
             
-            // Fungsi Buka Modal Return
+            // Open Return Modal
             openReturnModal(order, item) {
                 this.currentProduct = item.product;
                 this.currentOrder = order;
@@ -37,7 +37,7 @@
                 this.showReturnModal = true;
             },
 
-            // Fungsi Buka Modal Struk (Receipt)
+            // Open Receipt Modal
             openReceiptModal(order) {
                 this.receiptData = order;
                 this.showReceiptModal = true;
@@ -80,7 +80,7 @@
                 </nav>
             </aside>
     
-            {{-- KONTEN ORDER --}}
+            {{-- ORDER CONTENT --}}
             <div class="lg:col-span-9">
                 <div class="bg-white shadow-lg rounded-lg overflow-hidden border border-gray-200">
                     <div class="bg-white py-6 px-4 sm:p-6 border-b border-gray-200">
@@ -110,7 +110,7 @@
                                     {{-- HEADER ORDER --}}
                                     <div class="flex flex-col sm:flex-row sm:items-start sm:justify-between">
                                         <div>
-                                            {{-- Order ID jadi Tombol Klik untuk Struk --}}
+                                            {{-- Order ID Clickable for Receipt --}}
                                             <button @click="openReceiptModal({{ json_encode($order) }})" 
                                                     class="text-sm font-bold text-blue-600 hover:text-blue-800 hover:underline flex items-center gap-1">
                                                 Order #{{ $order->id }}
@@ -178,20 +178,16 @@
                                                         
                                                         <div class="flex items-center space-x-3 mb-3 sm:mb-0">
                                                             <img src="{{ $item->product->image ? asset('storage/' . $item->product->image) : 'https://placehold.co/64x64/e2e8f0/94a3b8?text=No+Img' }}" 
-                                                                 alt="{{ $item->product->name }}" 
+                                                                 alt="{{ $item->name }}" 
                                                                  class="w-12 h-12 rounded-lg object-cover border border-gray-200">
                                                             <div>
-                                                                <p class="text-sm font-medium text-gray-800">{{ $item->product->name }}</p>
+                                                                {{-- FIXED: Use item.name to avoid Unknown Item --}}
+                                                                <p class="text-sm font-medium text-gray-800">{{ $item->name }}</p>
                                                                 <p class="text-xs text-gray-500">Size: {{ $item->variant->size ?? 'N/A' }}</p>
                                                             </div>
                                                         </div>
                                                         
                                                         <div class="flex flex-col sm:items-end space-y-2 w-full sm:w-auto">
-                                                            {{-- 
-                                                                LOGIKA UTAMA:
-                                                                1. Jika sudah review => Tampilkan "Reviewed" (Tombol Return Hilang otomatis karena ada di blok 'else')
-                                                                2. Jika Belum ada Return ATAU Rejected ATAU (Approved & Type Return/Ganti Barang) => Tampilkan "Write a Review"
-                                                            --}}
                                                             @if ($hasReviewed)
                                                                 <span class="text-sm font-medium text-gray-400 italic flex items-center justify-end"><svg class="w-3 h-3 mr-1" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg> Reviewed</span>
                                                             @elseif (!$returnRequest || $returnRequest->status == 'rejected' || ($returnRequest->status == 'approved' && $returnRequest->type == 'return'))
@@ -200,7 +196,6 @@
 
                                                             @if ($returnRequest)
                                                                 <div class="text-right w-full">
-                                                                    {{-- Status Return Tetap Ditampilkan untuk Sejarah --}}
                                                                     <div class="text-xs flex justify-end items-center gap-2">
                                                                         <span class="text-gray-500 font-semibold">Return Status:</span>
                                                                         @if($returnRequest->status == 'pending')
@@ -211,17 +206,10 @@
                                                                             <span class="px-2 py-0.5 rounded bg-red-100 text-red-800 font-bold uppercase border border-red-200">Rejected</span>
                                                                         @endif
                                                                     </div>
-
                                                                     @if($returnRequest->status == 'approved')
-                                                                        <p class="text-[10px] font-bold text-gray-400 mt-1 flex items-center justify-end">
-                                                                            <svg class="w-3 h-3 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
-                                                                            Process Completed
-                                                                        </p>
+                                                                        <p class="text-[10px] font-bold text-gray-400 mt-1 flex items-center justify-end">Process Completed</p>
                                                                     @elseif($returnRequest->status == 'rejected')
-                                                                        <p class="text-[10px] font-bold text-gray-400 mt-1 flex items-center justify-end">
-                                                                            <svg class="w-3 h-3 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
-                                                                            Return Closed
-                                                                        </p>
+                                                                        <p class="text-[10px] font-bold text-gray-400 mt-1 flex items-center justify-end">Return Closed</p>
                                                                         @if($returnRequest->admin_response)
                                                                             <div class="bg-red-50 border border-red-100 p-2 rounded mt-1 text-left">
                                                                                 <p class="text-[10px] font-bold text-red-700">Reason:</p>
@@ -231,7 +219,6 @@
                                                                     @endif
                                                                 </div>
                                                             @else
-                                                                {{-- TOMBOL RETURN: Hanya tampil jika belum review --}}
                                                                 @if (!$hasReviewed)
                                                                     <button @click="openReturnModal({{ $order }}, {{ $item }})" class="text-sm font-semibold text-red-600 hover:text-red-800 hover:underline">Request Return</button>
                                                                 @endif
@@ -259,7 +246,7 @@
         </div>
         
         {{-- ====================================== --}}
-        {{-- MODAL STRUK (RECEIPT) --}}
+        {{-- RECEIPT MODAL (English Text, IDR Currency, Fix Unknown Item) --}}
         {{-- ====================================== --}}
         <div x-show="showReceiptModal" style="display: none;" class="fixed inset-0 z-50 overflow-y-auto" aria-labelledby="modal-title" role="dialog" aria-modal="true">
             <div class="flex items-center justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
@@ -273,7 +260,7 @@
                         <button @click="showReceiptModal = false" class="text-gray-400 hover:text-gray-500">&times;</button>
                     </div>
 
-                    {{-- Isi Struk --}}
+                    {{-- Content --}}
                     <div class="bg-white px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
                         <div class="text-center mb-6 border-b border-dashed border-gray-300 pb-4">
                             <h2 class="text-2xl font-bold text-slate-800 uppercase tracking-widest">NOIRISH</h2>
@@ -287,12 +274,14 @@
                             </div>
                             <div class="flex justify-between">
                                 <span class="text-gray-600">Date:</span>
+                                {{-- ENGLISH DATE FORMAT --}}
                                 <span class="font-medium text-slate-800" 
                                       x-text="receiptData ? new Date(receiptData.created_at).toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' }) : ''">
                                 </span>
                             </div>
                             <div class="flex justify-between">
                                 <span class="text-gray-600">Time:</span>
+                                {{-- ENGLISH TIME FORMAT --}}
                                 <span class="font-medium text-slate-800" 
                                       x-text="receiptData ? new Date(receiptData.created_at).toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' }) : ''">
                                 </span>
@@ -313,15 +302,18 @@
                                     <template x-for="item in receiptData.items" :key="item.id">
                                         <li class="flex justify-between text-sm items-start">
                                             <div class="flex flex-col">
-                                                <span class="font-bold text-slate-800" x-text="item.product ? item.product.name : 'Unknown Item'"></span>
+                                                {{-- FIX: Use item.name from order_items table --}}
+                                                <span class="font-bold text-slate-800" x-text="item.name"></span>
                                                 
                                                 <div class="text-xs text-gray-500 mt-0.5">
                                                     Qty: <span x-text="item.quantity"></span> 
                                                     &times; 
+                                                    {{-- KEEP RP CURRENCY --}}
                                                     <span class="font-medium text-slate-700" x-text="'Rp ' + Number(item.price).toLocaleString('id-ID')"></span>
                                                 </div>
                                             </div>
                                             
+                                            {{-- KEEP RP CURRENCY --}}
                                             <span class="text-slate-800 font-bold" 
                                                   x-text="'Rp ' + Number(item.price * item.quantity).toLocaleString('id-ID')">
                                             </span>
@@ -333,6 +325,7 @@
 
                         <div class="mt-6 border-t border-b border-dashed border-gray-300 py-4 flex justify-between items-center bg-gray-50 px-3 -mx-4">
                             <span class="text-base font-bold text-gray-800">Total Amount</span>
+                            {{-- KEEP RP CURRENCY --}}
                             <span class="text-lg font-bold text-slate-800" x-text="receiptData ? 'Rp ' + Number(receiptData.total).toLocaleString('id-ID') : ''"></span>
                         </div>
                         
@@ -363,7 +356,7 @@
         </div>
         <style>@keyframes shrink { from { width: 100%; } to { width: 0%; } }</style>
         
-        {{-- MODAL REVIEW (SAMA) --}}
+        {{-- MODAL REVIEW --}}
         <div x-show="showReviewModal" @click.away="showReviewModal = false" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black bg-opacity-75" style="display: none;">
             <div @click.stop class="bg-white rounded-lg shadow-xl w-full max-w-lg p-6 border border-gray-200">
                 <div class="flex justify-between items-center mb-4 border-b pb-3">

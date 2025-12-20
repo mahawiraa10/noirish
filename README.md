@@ -1,4 +1,4 @@
-## 🚀 Fitur Utama
+## Fitur Utama
 
 -   **Tampilan Modern**: Desain responsif menggunakan Tailwind CSS & Alpine.js.
 -   **Sistem Keranjang**: Kelola belanjaan dengan validasi stok otomatis.
@@ -18,7 +18,7 @@
 -   **Database**: MySQL
 -   **Payment Gateway**: Midtrans Snap
 
-## ⚙️ Cara Install & Menjalankan Project
+## Cara Install & Menjalankan Project
 
 Ikuti langkah-langkah berikut secara berurutan:
 
@@ -38,7 +38,7 @@ composer install
 npm install
 ```
 
-### 3\. Atur Environment (.env)
+### 3. Atur Environment (.env)
 
 Duplikat file `.env.example` lalu ubah namanya menjadi `.env`:
 
@@ -59,7 +59,7 @@ MIDTRANS_CLIENT_KEY=masukkan_client_key_disini
 MIDTRANS_IS_PRODUCTION=false
 ```
 
-### 4\. Generate Key Aplikasi
+### 4. Generate Key Aplikasi
 
 Buat kunci enkripsi baru untuk aplikasi:
 
@@ -67,7 +67,7 @@ Buat kunci enkripsi baru untuk aplikasi:
 php artisan key:generate
 ```
 
-### 5\. Setup Database
+### 5. Setup Database
 
 Pastikan lu sudah membuat database kosong bernama `noirish` di MySQL, lalu jalankan perintah ini untuk mengisi tabel dan data awal:
 
@@ -75,7 +75,7 @@ Pastikan lu sudah membuat database kosong bernama `noirish` di MySQL, lalu jalan
 php artisan migrate:fresh --seed
 ```
 
-### 6\. Link Storage Gambar
+### 6. Link Storage Gambar
 
 Agar gambar produk bisa muncul di browser:
 
@@ -83,7 +83,7 @@ Agar gambar produk bisa muncul di browser:
 php artisan storage:link
 ```
 
-### 7\. Jalankan Aplikasi
+### 7. Jalankan Aplikasi
 
 Buka dua terminal berbeda untuk menjalankan server:
 

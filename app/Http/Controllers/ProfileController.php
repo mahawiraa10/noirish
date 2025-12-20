@@ -104,15 +104,14 @@ class ProfileController extends Controller
      */
     public function orderHistory(Request $request): View
     {
-        // ... (Tidak ada perubahan di sini) ...
         $customer = $request->user();
         
         // ======================================================
-        // !! INI YANG DIUBAH !!
-        // =ARAHKANAmbil relasi 'items' (produk) DAN 'shipment' (pengiriman)
+        // 
+        // ARAHKAN Ambil relasi 'items' (produk) DAN 'shipment' (pengiriman)
         // ======================================================
         $orders = $customer->orders()
-                           ->with(['items', 'shipment', 'reviews']) // <-- DIUBAH DI SINI
+                           ->with(['items', 'shipment', 'reviews'])
                            ->latest()
                            ->paginate(10); 
 
@@ -126,7 +125,6 @@ class ProfileController extends Controller
      */
     public function wishlist(Request $request): View
     {
-        // ... (Tidak ada perubahan di sini) ...
         $user = $request->user();
         $products = $user->wishlistProducts()->paginate(12);
         return view('profile.wishlist', [ 

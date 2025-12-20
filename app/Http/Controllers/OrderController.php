@@ -33,8 +33,7 @@ class OrderController extends Controller
     // POST /api/orders → buat order baru
     public function store(Request $request)
     {
-        // Fungsi ini tidak terpakai di alur "Bayar Dulu, Baru Pesan"
-        // Tapi kita biarkan saja
+        
         return response()->json(['message' => 'This route is deprecated.'], 404);
     }
 
@@ -115,12 +114,12 @@ class OrderController extends Controller
 
                 fputcsv($file, [
                     $order->id ?? 'N/A',
-                    $order->created_at ? $order->created_at->format('Y-m-d H:i') : 'N/A',
+                    $order->created_at->format('d M Y H:i'),
                     $order->status ?? 'N/A',
                     $customer ? $customer->name : 'Guest',
                     $order->total ?? 0,
                     $order->refunded_amount ?? 0,
-                    $netTotal, // Total bersih setelah refund
+                    $netTotal,
                     $order->payment_method ?? 'N/A',
                     $order->transaction_id ?? 'N/A'
                 ]);
@@ -143,7 +142,7 @@ class OrderController extends Controller
             'cost' => 'nullable|numeric',
         ]);
         
-        // Gunakan Opsi B: update atau buat data di tabel 'order_shipments'
+        
         $order->shipment()->updateOrCreate(
             ['order_id' => $order->id], // Kunci pencarian
             [ // Data yang di-update atau dibuat

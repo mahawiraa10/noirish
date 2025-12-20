@@ -9,7 +9,7 @@ use App\Models\Customer;
 
 class CustomerAuthController extends Controller
 {
-    // 🔹 REGISTER CUSTOMER
+    // REGISTER CUSTOMER
     public function register(Request $request)
     {
         $request->validate([
@@ -43,7 +43,7 @@ class CustomerAuthController extends Controller
         ], 201);
     }
 
-    // 🔹 LOGIN CUSTOMER
+    // LOGIN CUSTOMER
     public function login(Request $request)
     {
         $request->validate([
@@ -66,7 +66,7 @@ class CustomerAuthController extends Controller
         ]);
     }
 
-    // 🔹 PROFILE CUSTOMER
+    // PROFILE CUSTOMER
     public function profile(Request $request)
     {
         return response()->json($request->user());

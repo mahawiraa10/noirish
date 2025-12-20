@@ -32,7 +32,7 @@ class ShipmentController extends Controller
     }
 
     /**
-     * Menampilkan detail (tidak terpakai di view, tapi bagus untuk ada)
+     
      */
     public function show(Shipment $shipment)
     {

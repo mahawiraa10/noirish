@@ -13,7 +13,7 @@ use App\Models\OrderItem;
 use App\Models\Payment;
 use App\Models\OrderShipment;
 use App\Models\ReturnRequest;
-use App\Models\ProductReview; // <-- 1. TAMBAHKAN INI
+use App\Models\ProductReview;
 
 class Order extends Model
 {
@@ -60,12 +60,6 @@ class Order extends Model
         return $this->hasMany(ReturnRequest::class, 'order_id');
     }
 
-    // ======================================================
-    // !! 3. INI FUNGSI BARU YANG MEMPERBAIKI ERROR !!
-    // ======================================================
-    /**
-     * Relasi: Satu Order bisa punya banyak Review
-     */
     public function reviews(): HasMany
     {
         return $this->hasMany(ProductReview::class);

@@ -12,17 +12,11 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('orders', function (Blueprint $table) {
-            // Tambahkan kolom untuk menyimpan ID unik dari Midtrans
-            $table->string('transaction_id')
-                  ->nullable()
-                  ->after('id')
-                  ->index();
+            // Tambahkan kolom transaction_id setelah customer_id
+            $table->string('transaction_id')->nullable()->after('customer_id');
         });
     }
 
-    /**
-     * Reverse the migrations.
-     */
     public function down(): void
     {
         Schema::table('orders', function (Blueprint $table) {

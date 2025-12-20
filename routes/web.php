@@ -95,16 +95,12 @@ Route::prefix('admin')
     ->name('admin.')
     ->group(function () {
         
-        // =========================================================================
-        // DASHBOARD ADMIN (LOGIC: SALES & CRM INSIGHTS)
-        // =========================================================================
         Route::get('/dashboard', function () {
             
             $validStatuses = ['paid', 'processing', 'shipped', 'delivered', 'completed'];
             $currentMonth = Carbon::now()->month;
             $currentYear = Carbon::now()->year;
             
-            // 1. Hitung MONTHLY SALES
             $grossSales = DB::table('order_items')
                 ->join('orders', 'orders.id', '=', 'order_items.order_id')
                 ->whereIn('orders.status', $validStatuses)
@@ -120,7 +116,6 @@ Route::prefix('admin')
 
             $monthlySales = $grossSales - $totalRefunds;
 
-            // 2. Hitung ACTIVE CUSTOMERS
             $activeCustomers = DB::table('orders')
                 ->whereIn('status', $validStatuses)
                 ->whereMonth('created_at', $currentMonth)
@@ -128,19 +123,16 @@ Route::prefix('admin')
                 ->distinct('customer_id')
                 ->count('customer_id');
 
-            // Data Statis Lainnya
             $totalProducts = App\Models\Product::count(); 
             $newCustomers = App\Models\User::where('role', 'user')->whereDate('created_at', today())->count();
             
-            // Top Products & Category
             $topProductData = OrderItem::whereYear('created_at', $currentYear)->whereMonth('created_at', $currentMonth)->with('product')->select('product_id', DB::raw('SUM(quantity) as total_quantity'))->groupBy('product_id')->orderByDesc('total_quantity')->first();
             $topCategoryData = DB::table('order_items')->join('products', 'order_items.product_id', '=', 'products.id')->join('categories', 'products.category_id', '=', 'categories.id')->whereYear('order_items.created_at', $currentYear)->whereMonth('order_items.created_at', $currentMonth)->select('categories.name', DB::raw('SUM(order_items.quantity) as total_quantity'))->groupBy('categories.name')->orderByDesc('total_quantity')->first();
 
-            // 3. CRM INSIGHTS (Hanya Gender & City)
             $topGenderData = DB::table('profiles')
                 ->join('users', 'users.id', '=', 'profiles.user_id')
                 ->where('users.role', 'user')
-                ->select('profiles.gender', DB::raw('count(*) as total')) // Spesifik profiles.gender
+                ->select('profiles.gender', DB::raw('count(*) as total'))
                 ->groupBy('profiles.gender')
                 ->orderByDesc('total')
                 ->first();
@@ -148,7 +140,7 @@ Route::prefix('admin')
             $topCityData = DB::table('profiles')
                 ->join('users', 'users.id', '=', 'profiles.user_id')
                 ->where('users.role', 'user')
-                ->select('profiles.city', DB::raw('count(*) as total')) // Spesifik profiles.city
+                ->select('profiles.city', DB::raw('count(*) as total'))
                 ->groupBy('profiles.city')
                 ->orderByDesc('total')
                 ->first();
@@ -160,8 +152,6 @@ Route::prefix('admin')
                 'newCustomers' => $newCustomers,
                 'topProductName' => $topProductData ? $topProductData->product->name : 'N/A',
                 'topCategoryName' => $topCategoryData ? $topCategoryData->name : 'N/A',
-                
-                // Mengirim Data Insight Customer (Tanpa Address)
                 'userGender' => $topGenderData ? $topGenderData->gender . ' (Majority)' : 'N/A',
                 'userCity' => $topCityData ? $topCityData->city . ' (Top City)' : 'N/A',
             ]);
@@ -189,16 +179,12 @@ Route::prefix('admin')
         Route::post('/settings', [SettingsController::class, 'update'])->name('settings.update');
         Route::post('/logout', [AdminAuthController::class, 'logout'])->name('logout');
 
-        // =========================================================================
-        // API SUMMARY DASHBOARD
-        // =========================================================================
         Route::get('/dashboard/summary', function () {
             
             $validStatuses = ['paid', 'processing', 'shipped', 'delivered', 'completed'];
             $currentMonth = Carbon::now()->month;
             $currentYear = Carbon::now()->year;
             
-            // Sales
             $grossSales = DB::table('order_items')
                 ->join('orders', 'orders.id', '=', 'order_items.order_id')
                 ->whereIn('orders.status', $validStatuses)
@@ -214,7 +200,6 @@ Route::prefix('admin')
 
             $monthlySales = $grossSales - $totalRefunds;
             
-            // Active Customers
             $activeCustomers = DB::table('orders')
                 ->whereIn('status', $validStatuses)
                 ->whereMonth('created_at', $currentMonth)
@@ -228,7 +213,6 @@ Route::prefix('admin')
             $topProductData = OrderItem::whereYear('order_items.created_at', $currentYear)->whereMonth('order_items.created_at', $currentMonth)->join('products', 'order_items.product_id', '=', 'products.id')->select('products.name', DB::raw('SUM(quantity) as total_quantity'))->groupBy('products.name')->orderByDesc('total_quantity')->first();
             $topCategoryData = DB::table('order_items')->join('products', 'order_items.product_id', '=', 'products.id')->join('categories', 'products.category_id', '=', 'categories.id')->whereYear('order_items.created_at', $currentYear)->whereMonth('order_items.created_at', $currentMonth)->select('categories.name', DB::raw('SUM(order_items.quantity) as total_quantity'))->groupBy('categories.name')->orderByDesc('total_quantity')->first();
             
-            // CRM INSIGHTS (Hanya Gender & City)
             $topGenderData = DB::table('profiles')
                 ->join('users', 'users.id', '=', 'profiles.user_id')
                 ->where('users.role', 'user')
@@ -245,8 +229,6 @@ Route::prefix('admin')
                 ->orderByDesc('total')
                 ->first();
 
-            // Address dihapus
-
             return response()->json([
                 'monthlySales' => $monthlySales,
                 'activeCustomers' => $activeCustomers,
@@ -254,7 +236,6 @@ Route::prefix('admin')
                 'newCustomers' => $newCustomers,
                 'topProductName' => $topProductData ? $topProductData->name : 'N/A',
                 'topCategoryName' => $topCategoryData ? $topCategoryData->name : 'N/A',
-                // Data Demografi (Tanpa Address)
                 'userGender' => $topGenderData ? $topGenderData->gender . ' (Majority)' : 'N/A',
                 'userCity' => $topCityData ? $topCityData->city . ' (Top City)' : 'N/A',
             ]);
@@ -297,18 +278,15 @@ Route::prefix('shop')->name('shop.')->group(function () {
     Route::get('/', fn() => view('customer.shop'))->name('index');
     Route::get('/checkout', [StoreController::class, 'checkout'])->middleware(['auth', 'profile.complete'])->name('checkout');
     
-    // ======================================================
-    // !! RUTE CHECKOUT (VERSI SANDBOX FIXED DENGAN ID NOIRISH) !!
-    // ======================================================
     Route::post('/checkout', function (Request $request) {
        $cart = session('cart', []);
         if (empty($cart)) {
             return response()->json(['message' => 'Your cart is empty.'], 400);
         }
 
-        /** @var \App\Models\User $user */
         $user = Auth::user();
 
+        // Pastikan relasi orders() ada di User model
         $isFirstOrder = $user->orders()->count() == 0;
 
         $input = $request->validate([
@@ -318,13 +296,11 @@ Route::prefix('shop')->name('shop.')->group(function () {
 
         DB::beginTransaction();
         try {
-            // 1. SETTING KONFIGURASI
             Config::$serverKey = config('midtrans.server_key');
             Config::$isProduction = config('midtrans.is_production');
             Config::$isSanitized = true;
             Config::$is3ds = true;
 
-            
             \Midtrans\Config::$curlOptions[CURLOPT_SSL_VERIFYHOST] = 0;
             \Midtrans\Config::$curlOptions[CURLOPT_SSL_VERIFYPEER] = 0;
             
@@ -352,7 +328,6 @@ Route::prefix('shop')->name('shop.')->group(function () {
                 ];
             }
 
-            // AMBIL ONGKIR
             $shippingCost = 0;
             $shippingMethodName = '';
             $shippingMethodId = $input['shipping_method_id']; 
@@ -369,7 +344,6 @@ Route::prefix('shop')->name('shop.')->group(function () {
                 $shippingMethodName = $shippingMethod->name;
             }
 
-            // Validasi Kupon
             $discountAmount = 0;
             if ($input['coupon_code']) {
                 $coupon = Coupon::where('code', $input['coupon_code'])->where('is_active', true)->first();
@@ -383,11 +357,9 @@ Route::prefix('shop')->name('shop.')->group(function () {
                 }
             }
 
-            // Hitung GRAND TOTAL
             $grandTotal = $subtotal + $shippingCost - $discountAmount;
             if ($grandTotal < 0) $grandTotal = 0;
 
-            // GENERATE ID UNIK NOIRISH
             $temp_order_id = 'NOIRISH-' . uniqid() . '-' . $user->id;
 
             DB::table('pending_checkouts')->insert([
@@ -450,7 +422,7 @@ Route::post('/track', [TrackingController::class, 'trackOrder'])->name('order.tr
 Route::view('/faq', 'faq')->name('faq.index'); 
 
 // ======================================================
-// !! WEBHOOK !!
+// !! WEBHOOK FIX: AMBIL NAMA DARI DATA CART (PASTI ADA) !!
 // ======================================================
 Route::post('/payment/callback', function (Request $request) {
     try {
@@ -462,11 +434,6 @@ Route::post('/payment/callback', function (Request $request) {
 
         if ($transaction == 'settlement' || $transaction == 'capture') {
             
-            $order = Order::where('transaction_id', $temp_order_id)->first();
-            if ($order) {
-                return response()->json(['status' => 'ok', 'message' => 'Order already processed.']);
-            }
-
             $pendingData = DB::table('pending_checkouts')->where('transaction_id', $temp_order_id)->first();
             
             if (!$pendingData) {
@@ -481,28 +448,46 @@ Route::post('/payment/callback', function (Request $request) {
 
             DB::beginTransaction();
             try {
+                // Cek duplikasi dulu
+                $exists = Order::where('transaction_id', $temp_order_id)->exists();
+                if ($exists) return response()->json(['status' => 'ok']);
+
                 $order = Order::create([
                     'customer_id' => $user_id,
                     'order_date' => now(),
                     'total' => $total,
                     'status' => 'paid', 
                     'payment_method' => $paymentMethodName,
-                    'transaction_id' => $temp_order_id 
+                    'transaction_id' => $temp_order_id, 
+                    'refunded_amount' => 0, 
                 ]);
 
                 $variantIds = array_column($cart, 'variant_id');
-                $variants = ProductVariant::whereIn('id', $variantIds)->lockForUpdate()->get()->keyBy('id');
+                $variants = ProductVariant::whereIn('id', $variantIds)
+                    ->with('product') // Tetap diload buat jaga-jaga
+                    ->lockForUpdate()
+                    ->get()
+                    ->keyBy('id');
                 
                 foreach ($cart as $item) {
                     $variant = $variants->get($item['variant_id']);
-                    if ($variant && $variant->stock >= $item['quantity']) {
-                        $variant->decrement('stock', $item['quantity']);
+                    
+                    if ($variant) {
+                        // Kurangi stok jika cukup
+                        if ($variant->stock >= $item['quantity']) {
+                            $variant->decrement('stock', $item['quantity']);
+                        }
                         
+                        // FIX: Ambil 'name' dari $item['name'] (Data Keranjang)
+                        // Kalau di keranjang kosong, baru coba ambil dari DB sebagai fallback
+                        $productName = $item['name'] ?? ($variant->product->name ?? 'Unknown Item');
+
                         $order->items()->create([
                             'product_id' => $item['product_id'],
                             'product_variant_id' => $item['variant_id'],
                             'quantity' => $item['quantity'],
                             'price' => $item['price'],
+                            'name' => $productName // <--- INI KUNCINYA
                         ]);
                     }
                 }
@@ -513,12 +498,17 @@ Route::post('/payment/callback', function (Request $request) {
 
             } catch (\Exception $e) {
                 DB::rollBack();
-                return response()->json(['message' => 'Webhook DB error'], 500);
+                return response()->json([
+                    'message' => 'Detail Error: ' . $e->getMessage(),
+                    'file' => $e->getFile(),
+                    'line' => $e->getLine()
+                ], 500);
             }
         }
         return response()->json(['status' => 'ok']);
 
     } catch (\Exception $e) {
+        Log::error("Webhook System Error: " . $e->getMessage());
         return response()->json(['message' => 'Internal Server Error'], 500);
     }
 })->name('midtrans.webhook');

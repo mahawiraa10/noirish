@@ -20,7 +20,7 @@ class Payment extends Model
         'payment_date',
     ];
 
-    // ✅ Relasi ke tabel orders
+    // Relasi ke tabel orders
     public function order()
     {
         return $this->belongsTo(Order::class);

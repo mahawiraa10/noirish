@@ -50,7 +50,7 @@ class PaymentController extends Controller
         $customer_details = [
             'first_name' => $order->customer->name,
             'email' => $order->customer->email,
-            'phone' => $order->customer->profile->phone, // Asumsi dari profile
+            'phone' => $order->customer->profile->phone,
         ];
 
         // 4. Gabungkan semua parameter
@@ -67,65 +67,6 @@ class PaymentController extends Controller
         } catch (\Exception $e) {
             // Jika error, kembalikan pesan error
             return ['error' => $e->getMessage()];
-        }
-    }
-
-    /**
-     * Menerima notifikasi/webhook dari Midtrans
-     */
-    public function handleWebhook(Request $request)
-    {
-        // 1. Terima notifikasi
-        $payload = $request->all();
-        $orderId = $payload['order_id'];
-        $statusCode = $payload['status_code'];
-        $grossAmount = $payload['gross_amount'];
-        
-        // 2. Verifikasi signature key
-        $signature = hash('sha512', $orderId . $statusCode . $grossAmount . config('midtrans.server_key'));
-        if ($signature !== $payload['signature_key']) {
-            return response()->json(['message' => 'Invalid signature'], 403);
-        }
-
-        // 3. Cari order di database
-        $order = Order::find($orderId);
-        if (!$order) {
-            return response()->json(['message' => 'Order not found'], 404);
-        }
-
-        // 4. Update status order DAN kurangi stok
-        DB::beginTransaction();
-        try {
-            // Cek status transaksi dari Midtrans
-            if ($payload['transaction_status'] == 'capture' || $payload['transaction_status'] == 'settlement') {
-                
-                // Hanya update jika statusnya masih pending_payment
-                if ($order->status == 'pending_payment') {
-                    
-                    // A. UPDATE STATUS ORDER
-                    $order->update(['status' => 'paid']); // Atau 'processing'
-
-                    // B. KURANGI STOK (Logika dipindah ke sini)
-                    foreach ($order->items as $item) {
-                        $variant = ProductVariant::find($item->product_variant_id);
-                        if ($variant) {
-                            $variant->decrement('stock', $item->quantity);
-                        }
-                    }
-                    
-                    DB::commit();
-                }
-            } else if ($payload['transaction_status'] == 'expire' || $payload['transaction_status'] == 'cancel' || $payload['transaction_status'] == 'deny') {
-                // (Opsional) Update status jadi 'failed' atau 'cancelled'
-                $order->update(['status' => 'failed']);
-                DB::commit();
-            }
-
-            return response()->json(['status' => 'ok']);
-
-        } catch (\Exception $e) {
-            DB::rollBack();
-            return response()->json(['message' => 'Webhook error: ' . $e->getMessage()], 500);
         }
     }
 }

@@ -30,5 +30,5 @@ class Coupon extends Model
         'is_active' => 'boolean',
     ];
 
-    // (Nanti kita akan tambahkan relasi ke Order dan User di sini)
+    
 }

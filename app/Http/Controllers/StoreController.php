@@ -159,7 +159,7 @@ class StoreController extends Controller
             // Kalau User Lama: Ambil kurir biasa dari database
             $shippingMethods = Shipment::where('is_active', true)->get();
         }
-        // !! SELESAI PERUBAHAN !!
+        
 
         $availableCoupons = Coupon::where('is_active', true)
                                   ->where(function($query) {
