@@ -22,3 +22,9 @@
 Homestead.json
 Homestead.yaml
 Thumbs.db
+
+# Production
+.env.production
+.env
+.env.*
+database/database.sqlite
