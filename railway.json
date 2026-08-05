@@ -2,7 +2,7 @@
   "$schema": "https://railway.app/railway.schema.json",
   "build": {
     "builder": "NIXPACKS",
-    "buildCommand": "composer install --no-dev && touch database/database.sqlite && php artisan config:cache && php artisan route:cache && php artisan view:cache"
+    "buildCommand": "composer install --no-dev --no-scripts && touch database/database.sqlite"
   },
   "deploy": {
     "startCommand": "php artisan migrate --force && php artisan storage:link && php artisan serve --host=0.0.0.0 --port=$PORT",
