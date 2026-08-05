@@ -28,10 +28,14 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-       // 1. LOGIKA SETTINGS (Biarin aja)
-        if (Schema::hasTable('settings')) {
-            $settings = Setting::pluck('value', 'key')->all();
-            View::share('settings', $settings);
+        // 1. LOGIKA SETTINGS (Biarin aja) - wrap try-catch & skip CLI/build
+        try {
+            if (!app()->runningInConsole() && Schema::hasTable('settings')) {
+                $settings = Setting::pluck('value', 'key')->all();
+                View::share('settings', $settings);
+            }
+        } catch (\Exception $e) {
+            // Abaikan error kalau DB belum siap
         }
 
         // 2. LOGIKA FORCE URL (VERSI GALAK)
@@ -55,11 +59,15 @@ class AppServiceProvider extends ServiceProvider
         
         // A. Admin (Pesan dari User)
         View::composer('layouts.admin', function ($view) {
-            if (Schema::hasTable('contact_messages')) {
-                $unreadMsgCount = ContactMessage::where('is_admin_reply', false)
-                                                ->where('is_read', false)
-                                                ->count();
-                $view->with('adminUnreadCount', $unreadMsgCount);
+            try {
+                if (!app()->runningInConsole() && Schema::hasTable('contact_messages')) {
+                    $unreadMsgCount = ContactMessage::where('is_admin_reply', false)
+                                            ->where('is_read', false)
+                                            ->count();
+                    $view->with('adminUnreadCount', $unreadMsgCount);
+                }
+            } catch (\Exception $e) {
+                // Abaikan
             }
         });
 
@@ -67,12 +75,17 @@ class AppServiceProvider extends ServiceProvider
         View::composer('*', function ($view) {
             $customerUnreadCount = 0;
             
-            if (Auth::check() && Auth::user()->role === 'user' && Schema::hasTable('contact_messages')) {
-                $customerUnreadCount = ContactMessage::where('user_id', Auth::id())
-                                                     ->where('is_admin_reply', true)
-                                                     ->where('is_read', false)
-                                                     ->count();
+            try {
+                if (!app()->runningInConsole() && Auth::check() && Auth::user()->role === 'user' && Schema::hasTable('contact_messages')) {
+                    $customerUnreadCount = ContactMessage::where('user_id', Auth::id())
+                                             ->where('is_admin_reply', true)
+                                             ->where('is_read', false)
+                                             ->count();
+                }
+            } catch (\Exception $e) {
+                // Abaikan
             }
+            
             $view->with('customerUnreadCount', $customerUnreadCount);
         });
     }
