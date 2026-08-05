@@ -6,10 +6,8 @@ use Illuminate\Support\ServiceProvider;
 use Illuminate\Support\Facades\URL;
 use Illuminate\Support\Facades\View;
 use Illuminate\Support\Facades\Schema;
-// !! TAMBAHAN PENTING YANG KETINGGALAN !!
 use Illuminate\Support\Facades\Auth;
 use App\Models\ContactMessage;
-// !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 use App\Models\Setting;
 use Midtrans\Config;
 
@@ -28,65 +26,50 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        // 1. LOGIKA SETTINGS (Biarin aja) - wrap try-catch & skip CLI/build
-        try {
-            if (!app()->runningInConsole() && Schema::hasTable('settings')) {
-                $settings = Setting::pluck('value', 'key')->all();
-                View::share('settings', $settings);
-            }
-        } catch (\Exception $e) {
-            // Abaikan error kalau DB belum siap
+        // 1. LOGIKA SETTINGS - Wrap total
+        if (!app()->runningInConsole()) {
+            try {
+                if (Schema::hasTable('settings')) {
+                    $settings = Setting::pluck('value', 'key')->all();
+                    View::share('settings', $settings);
+                }
+            } catch (\Exception $e) {}
         }
 
-        // 2. LOGIKA FORCE URL (VERSI GALAK)
-        // Ambil URL dari .env
+        // 2. LOGIKA FORCE URL
         $appUrl = config('app.url');
-
-        // Kalau .env isinya BUKAN localhost atau noirish.test (berarti lagi pake Tunnel/Ngrok)
-        if ($appUrl && $appUrl !== 'http://localhost' && $appUrl !== 'http://noirish.test') {
-            // Paksa Laravel pake URL itu buat semua link/gambar
-            \Illuminate\Support\Facades\URL::forceRootUrl($appUrl);
-            
-            // Kalau linknya https, paksa https juga
+        if ($appUrl && !in_array($appUrl, ['http://localhost', 'http://noirish.test'])) {
+            URL::forceRootUrl($appUrl);
             if (str_starts_with($appUrl, 'https://')) {
-                \Illuminate\Support\Facades\URL::forceScheme('https');
+                URL::forceScheme('https');
             }
         }
 
-        // ============================================================
-        // 3. LOGIKA NOTIFIKASI CHAT
-        // ============================================================
-        
-        // A. Admin (Pesan dari User)
-        View::composer('layouts.admin', function ($view) {
-            try {
-                if (!app()->runningInConsole() && Schema::hasTable('contact_messages')) {
-                    $unreadMsgCount = ContactMessage::where('is_admin_reply', false)
-                                            ->where('is_read', false)
-                                            ->count();
-                    $view->with('adminUnreadCount', $unreadMsgCount);
-                }
-            } catch (\Exception $e) {
-                // Abaikan
-            }
-        });
+        // 3. LOGIKA NOTIFIKASI - Skip total kalau lagi build/console
+        if (!app()->runningInConsole()) {
+            // Admin
+            View::composer('layouts.admin', function ($view) {
+                try {
+                    if (Schema::hasTable('contact_messages')) {
+                        $count = ContactMessage::where('is_admin_reply', false)->where('is_read', false)->count();
+                        $view->with('adminUnreadCount', $count);
+                    }
+                } catch (\Exception $e) {}
+            });
 
-        // B. Customer (Pesan dari Admin)
-        View::composer('*', function ($view) {
-            $customerUnreadCount = 0;
-            
-            try {
-                if (!app()->runningInConsole() && Auth::check() && Auth::user()->role === 'user' && Schema::hasTable('contact_messages')) {
-                    $customerUnreadCount = ContactMessage::where('user_id', Auth::id())
-                                             ->where('is_admin_reply', true)
-                                             ->where('is_read', false)
-                                             ->count();
+            // Customer
+            View::composer('*', function ($view) {
+                try {
+                    if (Auth::check() && Auth::user()->role === 'user' && Schema::hasTable('contact_messages')) {
+                        $count = ContactMessage::where('user_id', Auth::id())->where('is_admin_reply', true)->where('is_read', false)->count();
+                        $view->with('customerUnreadCount', $count);
+                    } else {
+                        $view->with('customerUnreadCount', 0);
+                    }
+                } catch (\Exception $e) {
+                    $view->with('customerUnreadCount', 0);
                 }
-            } catch (\Exception $e) {
-                // Abaikan
-            }
-            
-            $view->with('customerUnreadCount', $customerUnreadCount);
-        });
+            });
+        }
     }
 }
