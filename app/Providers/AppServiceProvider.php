@@ -32,8 +32,14 @@ class AppServiceProvider extends ServiceProvider
                 if (Schema::hasTable('settings')) {
                     $settings = Setting::pluck('value', 'key')->all();
                     View::share('settings', $settings);
+                } else {
+                    View::share('settings', []);
                 }
-            } catch (\Exception $e) {}
+            } catch (\Exception $e) {
+                View::share('settings', []);
+            }
+        } else {
+            View::share('settings', []);
         }
 
         // 2. LOGIKA FORCE URL
