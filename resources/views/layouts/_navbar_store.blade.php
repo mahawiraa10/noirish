@@ -102,7 +102,8 @@
                 
                 @auth 
                    @php
-                    $wishlistCount = auth()->user()->wishlistProducts()->count();
+                    $user = auth()->user();
+                    $wishlistCount = $user ? $user->wishlistProducts()->count() : 0;
                    @endphp
                     
                     {{-- Wishlist Icon --}}
