@@ -5,7 +5,7 @@
     "buildCommand": "rm -rf bootstrap/cache/* && composer install --no-dev --no-scripts && touch database/database.sqlite"
   },
   "deploy": {
-    "startCommand": "php artisan migrate --force && php artisan storage:link && php -S 0.0.0.0:$PORT -t public",
+    "startCommand": "php artisan config:clear && php artisan cache:clear && php artisan package:discover --ansi && php artisan migrate --force && php artisan storage:link && php -S 0.0.0.0:$PORT -t public",
     "healthcheckPath": "/",
     "healthcheckTimeout": 300,
     "restartPolicyType": "ON_FAILURE",
