@@ -2,10 +2,10 @@
   "$schema": "https://railway.app/railway.schema.json",
   "build": {
     "builder": "NIXPACKS",
-    "buildCommand": "composer install --no-dev --optimize-autoloader && npm install && npm run build"
+    "buildCommand": "rm -rf bootstrap/cache/* && composer install --ignore-platform-reqs --no-scripts && touch database/database.sqlite"
   },
   "deploy": {
-    "preDeployCommand": "php artisan config:cache && php artisan route:cache && php artisan view:cache && php artisan migrate --force && php artisan storage:link",
+    "startCommand": "rm -rf bootstrap/cache/* && php artisan config:clear && php artisan cache:clear && php artisan package:discover --ansi && php artisan migrate --force && php artisan storage:link && php -S 0.0.0.0:$PORT -t public",
     "healthcheckPath": "/",
     "healthcheckTimeout": 300,
     "restartPolicyType": "ON_FAILURE",
