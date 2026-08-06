@@ -47,8 +47,7 @@ use Midtrans\Notification;
 |--------------------------------------------------------------------------
 */
 
-Route::get('/', fn() => redirect()->route('home'));
-Route::get('/home', [StoreController::class, 'index'])->name('home');
+Route::get('/', [StoreController::class, 'index'])->name('home');
 
 Route::get('/dashboard', function () {
     return redirect()->route('home'); 
