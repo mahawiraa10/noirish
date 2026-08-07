@@ -15,6 +15,24 @@
                  alt="Noirish Hero" 
                  class="w-full h-full object-cover object-top opacity-80 grayscale">
         </div>
+
+        {{-- B. Hero Content (Mobile Friendly) --}}
+        <div class="relative z-10 w-full px-6 md:px-12 pb-6 text-center md:text-left">
+            <h1 class="text-3xl md:text-5xl lg:text-6xl font-bold text-white leading-tight mb-4">
+                Confident & <br>
+                <span class="text-gray-300 italic">Unruly.</span>
+            </h1>
+            <p class="text-sm md:text-lg text-gray-300 max-w-xl mx-auto md:mx-0 mb-6 leading-relaxed">
+                Discover our latest Box Tee collection. Designed for comfort, styled for confidence.
+            </p>
+            <a href="{{ route('catalogue.index') }}" 
+               class="inline-flex items-center gap-2 text-white font-bold border-b-2 border-white pb-1 hover:text-gray-300 hover:border-gray-300 transition-all duration-300 uppercase tracking-wide text-xs md:text-sm">
+                Get Yours Now
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-4 h-4">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M13.5 4.5 21 12m0 0-7.5 7.5M21 12H3" />
+                </svg>
+            </a>
+        </div>
     </section>
 
     {{-- ====================================== --}}

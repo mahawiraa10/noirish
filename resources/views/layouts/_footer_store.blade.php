@@ -1,10 +1,8 @@
 <footer class="bg-stone-50 text-slate-600 border-t border-stone-200 mt-24 pt-20 pb-12">
     <div class="max-w-7xl mx-auto px-6 lg:px-8 grid grid-cols-1 md:grid-cols-12 gap-12 md:gap-8">
         
-        {{-- ====================================== --}}
-        {{-- Kolom 1: Brand & Navigasi (Lebar 5/12) --}}
-        {{-- ====================================== --}}
-        <div class="md:col-span-5 space-y-8">
+        {{-- Kolom 1: Brand & Navigasi (Mobile full, Desktop 5/12) --}}
+        <div class="col-span-1 md:col-span-5 space-y-8">
             <div>
                 <h3 class="text-xs font-bold text-slate-900 uppercase tracking-widest mb-6">Explore</h3>
                 <div class="grid grid-cols-2 gap-x-8 gap-y-3 text-sm">
@@ -22,10 +20,8 @@
             </div>
         </div>
 
-        {{-- ====================================== --}}
-        {{-- Kolom 2: Contact Info (Lebar 3/12) --}}
-        {{-- ====================================== --}}
-        <div class="md:col-span-3">
+        {{-- Kolom 2: Contact Info (Mobile full, Desktop 3/12) --}}
+        <div class="col-span-1 md:col-span-3">
             <h3 class="text-xs font-bold text-slate-900 uppercase tracking-widest mb-6">Contact</h3>
             <ul class="space-y-4 text-sm">
                 <li class="flex items-start">
@@ -54,21 +50,16 @@
             </ul>
         </div>
         
-        {{-- ====================================== --}}
-        {{-- Kolom 3: Slogan & Social (Lebar 4/12) --}}
-        {{-- ====================================== --}}
-        <div class="md:col-span-4">
-            {{-- Ubah Judul --}}
+        {{-- Kolom 3: Slogan & Social (Mobile full, Desktop 4/12) --}}
+        <div class="col-span-1 md:col-span-4">
             <h3 class="text-xs font-bold text-slate-900 uppercase tracking-widest mb-6">Our Philosophy</h3>
             
-            {{-- SLOGAN BARU (Ganti form subscribe jadi ini) --}}
-            <div class="mb-8">
+            <div class="mb-8 hidden md:block">
                 <blockquote class="text-lg font-serif italic text-slate-700 leading-relaxed border-l-2 border-slate-300 pl-4">
                     "Elevate your everyday style with pieces that speak confidence. Quality is not just an act, it is a habit."
                 </blockquote>
             </div>
             
-            {{-- Social Icons --}}
             <div class="flex items-center space-x-6">
                 <a href="#" class="text-slate-400 hover:text-slate-900 transition-colors duration-300">
                     <span class="sr-only">Instagram</span>

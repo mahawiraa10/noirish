@@ -1,4 +1,4 @@
-<nav class="bg-white shadow-sm sticky top-0 z-40">
+<nav class="bg-white shadow-sm sticky top-0 z-40" x-data="{ mobileMenu: false }">
     <div class="container mx-auto px-4 py-3"> 
         <div class="flex justify-between items-center">
             
@@ -7,85 +7,71 @@
                 {{ $settings['store_name'] ?? config('app.name', 'NOIRISH') }} 
             </a>
 
-            {{-- MENU UTAMA --}}
-            <div class="hidden md:flex space-x-8 items-center"> 
-                <a href="{{ route('home') }}" 
-                   @class([
-                       'py-2 text-sm font-medium transition-all border-b-2',
-                       'text-slate-900 border-slate-800' => request()->routeIs('home'), 
-                       'text-slate-600 border-transparent hover:text-slate-800 hover:border-slate-800' => !request()->routeIs('home'),
-                   ])>
-                   HOME
-                </a>
+            {{-- MENU UTAMA (Desktop) --}}
+                        <div class="hidden md:flex space-x-8 items-center">
+                            <a href="{{ route('home') }}" 
+                               @class([
+                                   'py-2 text-sm font-medium transition-all border-b-2',
+                                   'text-slate-900 border-slate-800' => request()->routeIs('home'), 
+                                   'text-slate-600 border-transparent hover:text-slate-800 hover:border-slate-800' => !request()->routeIs('home'),
+                               ])>
+                               HOME
+                            </a>
                 
-                <a href="{{ route('catalogue.index') }}"
-                   @class([
-                       'py-2 text-sm font-medium transition-all border-b-2',
-                       'text-slate-900 border-slate-800' => request()->routeIs('catalogue.*'), 
-                       'text-slate-600 border-transparent hover:text-slate-800 hover:border-slate-800' => !request()->routeIs('catalogue.*'),
-                   ])>
-                   CATALOGUE
-                </a>
+                            <a href="{{ route('catalogue.index') }}"
+                               @class([
+                                   'py-2 text-sm font-medium transition-all border-b-2',
+                                   'text-slate-900 border-slate-800' => request()->routeIs('catalogue.*'), 
+                                   'text-slate-600 border-transparent hover:text-slate-800 hover:border-slate-800' => !request()->routeIs('catalogue.*'),
+                               ])>
+                               CATALOGUE
+                            </a>
 
-                 <a href="{{ route('new-arrivals' )}}" 
-                    @class([
-                        'py-2 text-sm font-medium transition-all border-b-2',
-                        'text-slate-900 border-slate-800' => request()->routeIs('new-arrivals'), 
-                        'text-slate-600 border-transparent hover:text-slate-800 hover:border-slate-800' => !request()->routeIs('new-arrivals'),
-                    ])>
-                    NEW ARRIVALS
-                </a>
+                             <a href="{{ route('new-arrivals' )}}" 
+                                @class([
+                                    'py-2 text-sm font-medium transition-all border-b-2',
+                                    'text-slate-900 border-slate-800' => request()->routeIs('new-arrivals'), 
+                                    'text-slate-600 border-transparent hover:text-slate-800 hover:border-slate-800' => !request()->routeIs('new-arrivals'),
+                                ])>
+                                NEW ARRIVALS
+                            </a>
 
-                 <a href="{{ route('contact.index') }}" 
-                @class([
-                    'py-2 text-sm font-medium transition-all border-b-2',
-                    'text-slate-900 border-slate-800' => request()->routeIs('contact.index'),
-                    'text-slate-600 border-transparent hover:text-slate-800 hover:border-slate-800' => !request()->routeIs('contact.index'),
-                    ])>
-                    CONTACT
+                             <a href="{{ route('contact.index') }}" 
+                            @class([
+                                'py-2 text-sm font-medium transition-all border-b-2',
+                                'text-slate-900 border-slate-800' => request()->routeIs('contact.index'),
+                                'text-slate-600 border-transparent hover:text-slate-800 hover:border-slate-800' => !request()->routeIs('contact.index'),
+                                ])>
+                                CONTACT
 
-                    @if(isset($customerUnreadCount) && $customerUnreadCount > 0)
-                        {{-- Notif Contact biarkan Merah sebagai Alert --}}
-                        <span class="absolute -top-2 -right-3 bg-red-500 text-white text-[10px] font-bold w-5 h-5 flex items-center justify-center rounded-full">
-                            {{ $customerUnreadCount }}
-                        </span>
-                    @endif
-                </a>
+                                @if(isset($customerUnreadCount) && $customerUnreadCount > 0)
+                                    <span class="absolute -top-2 -right-3 bg-red-500 text-white text-[10px] font-bold w-5 h-5 flex items-center justify-center rounded-full">
+                                        {{ $customerUnreadCount }}
+                                    </span>
+                                @endif
+                            </a>
+                        </div>
 
-                <a href="{{ route('about.index') }}" 
-                   @class([
-                       'py-2 text-sm font-medium transition-all border-b-2',
-                       'text-slate-900 border-slate-800' => request()->routeIs('about.index'),
-                       'text-slate-600 border-transparent hover:text-slate-800 hover:border-slate-800' => !request()->routeIs('about.index'),
-                   ])>
-                   ABOUT
-                </a>
+                        {{-- MOBILE MENU BUTTON --}}
+                        <div class="md:hidden">
+                            <button @click="mobileMenu = !mobileMenu" class="text-slate-500 hover:text-slate-800 focus:outline-none">
+                                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7"></path>
+                                </svg>
+                            </button>
+                        </div>
 
-                <a href="{{ route('faq.index') }}"
-                   @class([
-                       'py-2 text-sm font-medium transition-all border-b-2',
-                       'text-slate-900 border-slate-800' => request()->routeIs('faq.index'), 
-                       'text-slate-600 border-transparent hover:text-slate-800 hover:border-slate-800' => !request()->routeIs('faq.index'), 
-                   ])>
-                   FAQ
-                </a>
-
-                {{-- LINK ADMIN (Hanya muncul untuk Admin) --}}
-                @auth
-                    @if (auth()->user()->role == 'admin')
-                        <a href="{{ route('admin.dashboard') }}"
-                           title="Go to Admin Panel"
-                           @class([
-                               'py-2 text-sm font-medium transition-all border-b-2',
-                               'text-red-600 border-red-600' => request()->routeIs('admin.*'), 
-                               'text-red-500 border-transparent hover:text-red-600 hover:border-red-600' => !request()->routeIs('admin.*'), 
-                           ])>
-                           ADMIN PANEL
-                        </a>
-                    @endif
-                @endauth
-
-            </div>
+                        {{-- MOBILE MENU DROPDOWN --}}
+                        <div x-show="mobileMenu" 
+                             x-cloak
+                             class="absolute top-16 left-0 w-full bg-white shadow-lg border-t border-gray-100 z-50 md:hidden p-4 space-y-4">
+                             <a href="{{ route('home') }}" class="block text-slate-600 hover:text-slate-900">HOME</a>
+                             <a href="{{ route('catalogue.index') }}" class="block text-slate-600 hover:text-slate-900">CATALOGUE</a>
+                             <a href="{{ route('new-arrivals') }}" class="block text-slate-600 hover:text-slate-900">NEW ARRIVALS</a>
+                             <a href="{{ route('contact.index') }}" class="block text-slate-600 hover:text-slate-900">CONTACT</a>
+                             <a href="{{ route('about.index') }}" class="block text-slate-600 hover:text-slate-900">ABOUT</a>
+                             <a href="{{ route('faq.index') }}" class="block text-slate-600 hover:text-slate-900">FAQ</a>
+                        </div>
 
             {{-- IKON KANAN --}}
             <div class="flex space-x-5 items-center">
