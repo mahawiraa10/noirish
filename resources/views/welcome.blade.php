@@ -7,13 +7,13 @@
     {{-- ====================================== --}}
     {{-- 1. HERO SECTION (Black & White) --}}
     {{-- ====================================== --}}
-    <section class="relative h-[85vh] flex items-end justify-center overflow-hidden bg-black pb-24">
+    <section class="relative min-h-[60vh] md:h-[85vh] flex items-center justify-center overflow-hidden bg-black py-12">
         
         {{-- A. Background Image --}}
         <div class="absolute inset-0 z-0">
             <img src="{{ asset('images/heroimages.png') }}" 
                  alt="Noirish Hero" 
-                 class="w-full h-full object-cover object-top opacity-80 grayscale">
+                 class="w-full h-auto max-h-[60vh] md:max-h-[85vh] object-contain object-center opacity-80 grayscale">
         </div>
 
         {{-- B. Hero Content (Mobile Friendly) --}}
