@@ -10,11 +10,15 @@
     <section class="relative min-h-[60vh] md:h-[85vh] flex items-center justify-center overflow-hidden bg-black py-12">
         
         {{-- A. Background Image --}}
-        <div class="absolute inset-0 z-0">
+        {{-- Sembunyiin di mobile, munculin di desktop --}}
+        <div class="absolute inset-0 z-0 hidden md:block">
             <img src="{{ asset('images/heroimages.png') }}" 
                  alt="Noirish Hero" 
-                 class="w-full h-auto max-h-[60vh] md:max-h-[85vh] object-contain object-center opacity-80 grayscale">
+                 class="w-full h-full object-cover object-top opacity-80 grayscale">
         </div>
+
+        {{-- Overlay warna buat mobile --}}
+        <div class="absolute inset-0 z-0 md:hidden bg-gradient-to-br from-black via-gray-900 to-black"></div>
 
         {{-- B. Hero Content (Mobile Friendly) --}}
         <div class="relative z-10 w-full px-6 md:px-12 pb-6 text-center md:text-left">
