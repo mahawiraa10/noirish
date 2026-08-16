@@ -18,9 +18,11 @@
         
         /* Sidebar */
         .sidebar {
-            width: 60px; /* Slimmer icon-only width */
+            width: 60px; /* Slim icon-only width */
+            min-width: 60px; /* Prevent collapse below icon width */
             transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
             overflow: hidden;
+            box-shadow: 1px 0 3px rgba(0,0,0,0.1);
         }
         
         .sidebar.expanded {
@@ -30,6 +32,8 @@
         .sidebar .logo-section {
             padding: 1rem 0.5rem;
             justify-content: center;
+            height: 60px;
+            box-sizing: border-box;
         }
         
         .sidebar.expanded .logo-section {
@@ -38,32 +42,70 @@
         }
         
         .nav-item {
-            margin: 0.5rem;
-            padding: 0.75rem !important;
+            margin: 0.25rem 0.5rem;
+            padding: 0.75rem;
+            border-radius: 0.5rem;
             justify-content: center;
+            position: relative;
+            overflow: hidden;
         }
         
         .sidebar.expanded .nav-item {
             justify-content: flex-start;
-            padding: 0.75rem 1rem !important;
+            padding: 0.75rem 1rem;
         }
         
         .nav-item-text {
             white-space: nowrap;
             opacity: 0;
-            transition: opacity 0.2s ease;
+            margin-left: 0;
+            transition: opacity 0.2s ease, all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            position: absolute;
+            left: 60px;
         }
         
         .sidebar.expanded .nav-item-text {
             opacity: 1;
+            position: static;
+            left: auto;
+            margin-left: 0.75rem;
         }
         
         .nav-item-badge {
             display: none;
+            position: absolute;
+            top: 0.5rem;
+            right: 0.5rem;
+            min-width: 20px;
+            height: 20px;
+            font-size: 0.7rem;
         }
         
         .sidebar.expanded .nav-item-badge {
             display: flex;
+            position: static;
+            margin-left: auto;
+        }
+        
+        /* Header */
+        .admin-header {
+            position: sticky;
+            top: 0;
+            z-index: 20;
+            background: white;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+            padding: 0.75rem 1rem;
+            height: 60px;
+        }
+        
+        /* Main Content */
+        .main-content {
+            margin-left: 60px;
+            transition: margin-left 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        
+        .sidebar.expanded ~ .main-content {
+            margin-left: 240px;
         }
         
         /* Header */
@@ -210,7 +252,7 @@
         </aside>
 
         {{-- ========== KONTEN UTAMA ========== --}}
-        <div class="flex-1 flex flex-col overflow-hidden">
+        <div class="flex-1 flex flex-col overflow-hidden main-content">
             {{-- Header --}}
             <header class="admin-header flex justify-between items-center p-4">
                 <div class="flex items-center gap-3">
