@@ -87,17 +87,6 @@
             margin-left: auto;
         }
         
-        /* Header */
-        .admin-header {
-            position: sticky;
-            top: 0;
-            z-index: 20;
-            background: white;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
-            padding: 0.75rem 1rem;
-            height: 60px;
-        }
-        
         /* Main Content */
         .main-content {
             /* Di HP, konten selalu berjarak 60px karena sidebar slim melayang di kiri */
@@ -140,7 +129,7 @@
         }
     </style>
 </head>
-<body class="bg-stone-100" x-data="{ sidebarOpen: false }">
+<body class="bg-stone-50" x-data="{ sidebarOpen: false }">
     <div class="flex min-h-screen">
         
         {{-- ========== BACKDROP (Layar Gelap Khusus Mobile) ========== --}}
@@ -251,33 +240,40 @@
 
         {{-- ========== KONTEN UTAMA ========== --}}
         <div class="flex-1 flex flex-col overflow-hidden main-content">
-            {{-- Header --}}
-            <header class="admin-header flex justify-between items-center p-4">
-                <div class="flex items-center gap-3">
-                    <button 
-                        @click="sidebarOpen = !sidebarOpen"
-                        class="text-slate-600 hover:text-slate-900 p-1 rounded-md hover:bg-slate-200 transition-colors">
-                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
-                            <path stroke-linecap="round" stroke-linejoin="round" d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5" />
-                        </svg>
-                    </button>
-                    <h1 class="text-xl font-semibold text-slate-800">@yield('title', 'Admin Panel')</h1>
-                </div>
-                <div class="flex items-center">
-                    <a href="{{ route('home') }}" 
-                       target="_blank"
-                       class="inline-flex items-center gap-1.5 text-sm font-medium text-slate-600 hover:text-slate-900 transition-colors">
-                        <span class="nav-item-text">View Store</span>
-                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-4 h-4">
-                            <path stroke-linecap="round" stroke-linejoin="round" d="M13.5 6H5.25A2.25 2.25 0 0 0 3 8.25v10.5A2.25 2.25 0 0 0 5.25 21h10.5A2.25 2.25 0 0 0 18 18.75V10.5m-10.5 6L21 3m0 0h-5.25M21 3v5.25" />
-                        </svg>
-                    </a>
+            
+            {{-- Header dengan standar Holy Grail --}}
+            <header class="bg-white shadow-sm sticky top-0 z-20">
+                <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex justify-between items-center w-full">
+                    <div class="flex items-center gap-3">
+                        <button 
+                            @click="sidebarOpen = !sidebarOpen"
+                            class="text-slate-600 hover:text-slate-900 p-1.5 rounded-md hover:bg-slate-100 transition-colors md:hidden">
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5" />
+                            </svg>
+                        </button>
+                        <h1 class="text-[clamp(1.125rem,2.5vw,1.25rem)] font-semibold text-slate-800">
+                            @yield('title', 'Admin Panel')
+                        </h1>
+                    </div>
+                    <div class="flex items-center">
+                        <a href="{{ route('home') }}" 
+                           target="_blank"
+                           class="inline-flex items-center gap-1.5 text-sm font-medium text-slate-600 hover:text-slate-900 transition-colors bg-slate-100 hover:bg-slate-200 px-3 py-1.5 rounded-full">
+                            <span class="hidden sm:inline">View Store</span>
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-4 h-4">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M13.5 6H5.25A2.25 2.25 0 0 0 3 8.25v10.5A2.25 2.25 0 0 0 5.25 21h10.5A2.25 2.25 0 0 0 18 18.75V10.5m-10.5 6L21 3m0 0h-5.25M21 3v5.25" />
+                            </svg>
+                        </a>
+                    </div>
                 </div>
             </header>
             
-            {{-- Content --}}
-            <main class="flex-1 overflow-x-auto p-4 md:p-6">
-                @yield('content')
+            {{-- Content Area dengan standar Holy Grail --}}
+            <main class="flex-1 overflow-x-hidden overflow-y-auto bg-stone-50">
+                <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 w-full">
+                    @yield('content')
+                </div>
             </main>
         </div>
     </div>
