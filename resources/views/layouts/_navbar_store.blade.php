@@ -8,7 +8,7 @@
             </a>
 
             {{-- MENU UTAMA (Desktop) --}}
-                        <div class="hidden md:flex space-x-8 items-center">
+                        <div class="hidden md:flex space-x-6 lg:space-x-8 items-center">
                             <a href="{{ route('home') }}" 
                                @class([
                                    'py-2 text-sm font-medium transition-all border-b-2',
@@ -64,6 +64,7 @@
                         {{-- MOBILE MENU DROPDOWN --}}
                         <div x-show="mobileMenu" 
                              x-cloak
+                             @click.away="mobileMenu = false"
                              class="absolute top-16 left-0 w-full bg-white shadow-lg border-t border-gray-100 z-50 md:hidden p-4 space-y-4">
                              <a href="{{ route('home') }}" class="block text-slate-600 hover:text-slate-900">HOME</a>
                              <a href="{{ route('catalogue.index') }}" class="block text-slate-600 hover:text-slate-900">CATALOGUE</a>

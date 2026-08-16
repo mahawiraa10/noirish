@@ -84,3 +84,155 @@
 .custom-button:hover {
     background-color: #1e293b; /* Warna slate-900 saat hover */
 }
+
+/* ======================================== */
+/* MOBILE RESPONSIVE FIXES */
+/* ======================================== */
+
+/* Hero Section Mobile */
+@media (max-width: 767px) {
+    .hero-mobile-text {
+        font-size: 1.5rem !important;
+        line-height: 1.2 !important;
+    }
+    
+    .hero-mobile-p {
+        font-size: 0.875rem !important;
+    }
+}
+
+/* Navbar Mobile Fixes */
+.md\:hidden {
+    display: none;
+}
+
+/* Mobile Menu Dropdown */
+@media (max-width: 767px) {
+    .mobile-menu-dropdown {
+        max-height: 70vh;
+        overflow-y: auto;
+    }
+    
+    .mobile-menu-dropdown a {
+        display: block;
+        padding: 0.75rem 0;
+        border-bottom: 1px solid #e2e8f0;
+    }
+}
+
+/* Product Grid Mobile */
+@media (max-width: 639px) {
+    .product-grid-mobile {
+        grid-template-columns: repeat(2, 1fr) !important;
+        gap: 1rem !important;
+    }
+    
+    .product-card-mobile {
+        aspect-ratio: 3/4 !important;
+    }
+}
+
+/* Button Sizes Mobile */
+@media (max-width: 767px) {
+    .btn-mobile {
+        padding: 0.5rem 1rem !important;
+        font-size: 0.75rem !important;
+    }
+}
+
+/* Touch Target Sizes */
+@media (max-width: 767px) {
+    .touch-target {
+        min-height: 44px;
+        min-width: 44px;
+    }
+    
+    button,
+    [role="button"],
+    a[href] {
+        min-height: 44px;
+        min-width: 44px;
+    }
+}
+
+/* Prevent Horizontal Scroll */
+html {
+    overflow-x: hidden;
+}
+
+body {
+    overflow-x: hidden;
+    -webkit-overflow-scrolling: touch;
+}
+
+/* Smooth Scrolling */
+html {
+    scroll-behavior: smooth;
+}
+
+/* Image Optimization Mobile */
+@media (max-width: 767px) {
+    img {
+        max-width: 100%;
+        height: auto;
+    }
+}
+
+/* Form Input Mobile */
+@media (max-width: 767px) {
+    input[type="text"],
+    input[type="email"],
+    input[type="password"],
+    input[type="number"],
+    textarea,
+    select {
+        width: 100%;
+        padding: 0.75rem;
+        font-size: 1rem;
+    }
+}
+
+/* Fix Viewport Units on Mobile */
+@media (max-width: 767px) {
+    .min-h-screen {
+        min-height: 100vh;
+        min-height: -webkit-fill-available;
+    }
+}
+
+/* Mobile Navigation Spacing */
+@media (max-width: 767px) {
+    .navbar-mobile {
+        padding: 1rem 0;
+    }
+    
+    .navbar-mobile .container {
+        padding-left: 1rem;
+        padding-right: 1rem;
+    }
+}
+
+/* Cart/Wishlist Badge Mobile */
+@media (max-width: 767px) {
+    .badge-mobile {
+        font-size: 0.625rem !important;
+        width: 18px !important;
+        height: 18px !important;
+        line-height: 18px !important;
+    }
+}
+
+/* Search Bar Mobile */
+@media (max-width: 767px) {
+    .search-container.active .search-input {
+        width: 200px !important;
+    }
+}
+
+/* AOS Animation Mobile Fix */
+@media (max-width: 767px) {
+    [data-aos] {
+        opacity: 1 !important;
+        transform: none !important;
+    }
+}

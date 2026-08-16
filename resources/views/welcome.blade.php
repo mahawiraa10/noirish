@@ -14,19 +14,19 @@
         <div class="absolute inset-0 z-0 hidden md:block">
             <img src="{{ asset('images/heroimages.png') }}" 
                  alt="Noirish Hero" 
-                 class="w-full h-full object-cover object-top opacity-80 grayscale">
+                 class="w-full h-full object-cover object-top opacity-80 grayscale brightness-100">
         </div>
 
         {{-- Overlay warna buat mobile --}}
-        <div class="absolute inset-0 z-0 md:hidden bg-gradient-to-br from-black via-gray-900 to-black"></div>
+        <div class="absolute inset-0 z-0 md:hidden bg-black"></div>
 
         {{-- B. Hero Content (Mobile Friendly) --}}
         <div class="relative z-10 w-full px-6 md:px-12 pb-6 text-center md:text-left">
-            <h1 class="text-3xl md:text-5xl lg:text-6xl font-bold text-white leading-tight mb-4">
+            <h1 class="hero-mobile-text text-3xl md:text-5xl lg:text-6xl font-bold text-white leading-tight mb-4">
                 Confident & <br>
                 <span class="text-gray-300 italic">Unruly.</span>
             </h1>
-            <p class="text-sm md:text-lg text-gray-300 max-w-xl mx-auto md:mx-0 mb-6 leading-relaxed">
+            <p class="hero-mobile-p text-sm md:text-lg text-gray-300 max-w-xl mx-auto md:mx-0 mb-6 leading-relaxed">
                 Discover our latest Box Tee collection. Designed for comfort, styled for confidence.
             </p>
             <a href="{{ route('catalogue.index') }}" 
