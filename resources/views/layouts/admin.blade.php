@@ -88,45 +88,48 @@
         }
         
         /* Header */
-                .admin-header {
-                    position: sticky;
-                    top: 0;
-                    z-index: 20;
-                    background: white;
-                    box-shadow: 0 1px 3px rgba(0,0,0,0.1);
-                    padding: 0.75rem 1rem;
-                    height: 60px;
-                }
+        .admin-header {
+            position: sticky;
+            top: 0;
+            z-index: 20;
+            background: white;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+            padding: 0.75rem 1rem;
+            height: 60px;
+        }
         
-                /* Main Content */
-                .main-content {
-                    margin-left: 60px;
-                    transition: margin-left 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-                }
-        
-                .sidebar.expanded ~ .main-content {
-                    margin-left: 240px;
-                }
-        
-                /* Responsive breakpoints */
-                @media (min-width: 768px) {
-                    .sidebar {
-                        width: 200px; /* Tablet: semi-expanded */
-                    }
-            
-                    .sidebar .logo-text,
-                    .sidebar .nav-item-text {
-                        opacity: 1;
-                    }
-            
-                    .sidebar ~ .main-content {
-                        margin-left: 200px;
-                    }
-                }
-        
+        /* Main Content */
+        .main-content {
+            /* Di HP, konten selalu berjarak 60px karena sidebar slim melayang di kiri */
+            margin-left: 60px; 
+            width: calc(100% - 60px);
+            transition: margin-left 0.3s cubic-bezier(0.4, 0, 0.2, 1), width 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        /* Responsive breakpoints */
+        @media (min-width: 768px) {
+            .sidebar {
+                width: 200px; /* Tablet: semi-expanded */
+            }
+    
+            .sidebar .logo-text,
+            .sidebar .nav-item-text {
+                opacity: 1;
+            }
+    
+            .sidebar ~ .main-content {
+                margin-left: 200px; /* Dorong konten di tablet */
+                width: calc(100% - 200px);
+            }
+        }
+
         @media (min-width: 1024px) {
             .sidebar {
                 width: 250px; /* Desktop: full width */
+            }
+            .sidebar.expanded ~ .main-content {
+                margin-left: 250px; /* Dorong konten HANYA saat di desktop */
+                width: calc(100% - 250px);
             }
         }
         
@@ -140,9 +143,17 @@
 <body class="bg-stone-100" x-data="{ sidebarOpen: false }">
     <div class="flex min-h-screen">
         
+        {{-- ========== BACKDROP (Layar Gelap Khusus Mobile) ========== --}}
+        <div x-show="sidebarOpen" 
+             @click="sidebarOpen = false" 
+             x-transition.opacity 
+             class="fixed inset-0 z-20 bg-slate-900/50 md:hidden backdrop-blur-sm"
+             style="display: none;">
+        </div>
+        
         {{-- ========== SIDEBAR (COLLAPSIBLE) ========== --}}
         <aside 
-            class="sidebar bg-slate-800 text-slate-200 flex flex-col min-h-screen sticky top-0 left-0 z-30"
+            class="sidebar bg-slate-800 text-slate-200 flex flex-col h-screen fixed md:sticky top-0 left-0 z-30"
             :class="{ 'expanded': sidebarOpen }">
             {{-- Logo Section --}}
             <div class="logo-section px-6 py-5 border-b border-slate-700 flex items-center gap-3">
