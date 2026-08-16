@@ -88,54 +88,41 @@
         }
         
         /* Header */
-        .admin-header {
-            position: sticky;
-            top: 0;
-            z-index: 20;
-            background: white;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
-            padding: 0.75rem 1rem;
-            height: 60px;
-        }
+                .admin-header {
+                    position: sticky;
+                    top: 0;
+                    z-index: 20;
+                    background: white;
+                    box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+                    padding: 0.75rem 1rem;
+                    height: 60px;
+                }
         
-        /* Main Content */
-        .main-content {
-            margin-left: 60px;
-            transition: margin-left 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-        }
+                /* Main Content */
+                .main-content {
+                    margin-left: 60px;
+                    transition: margin-left 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+                }
         
-        .sidebar.expanded ~ .main-content {
-            margin-left: 240px;
-        }
+                .sidebar.expanded ~ .main-content {
+                    margin-left: 240px;
+                }
         
-        /* Header */
-        .admin-header {
-            position: sticky;
-            top: 0;
-            z-index: 20;
-            background: white;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
-        }
-        
-        /* Responsive breakpoints */
-        @media (min-width: 768px) {
-            .sidebar {
-                width: 200px; /* Tablet: semi-expanded */
-            }
+                /* Responsive breakpoints */
+                @media (min-width: 768px) {
+                    .sidebar {
+                        width: 200px; /* Tablet: semi-expanded */
+                    }
             
-            .sidebar .logo-text {
-                display: block;
-            }
+                    .sidebar .logo-text,
+                    .sidebar .nav-item-text {
+                        opacity: 1;
+                    }
             
-            .sidebar .nav-item-text {
-                display: block;
-            }
-            
-            .sidebar .nav-item-badge {
-                position: static;
-                margin-left: auto;
-            }
-        }
+                    .sidebar ~ .main-content {
+                        margin-left: 200px;
+                    }
+                }
         
         @media (min-width: 1024px) {
             .sidebar {
