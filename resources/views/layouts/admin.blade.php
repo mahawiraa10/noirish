@@ -18,48 +18,52 @@
         
         /* Sidebar */
         .sidebar {
-            width: 64px; /* Icon-only width */
-            transition: width 0.3s ease;
+            width: 60px; /* Slimmer icon-only width */
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            overflow: hidden;
         }
         
         .sidebar.expanded {
-            width: 250px; /* Full width */
+            width: 240px; /* Comfortable full width */
         }
         
         .sidebar .logo-section {
-            padding: 1rem;
+            padding: 1rem 0.5rem;
             justify-content: center;
         }
         
         .sidebar.expanded .logo-section {
             justify-content: flex-start;
+            padding: 1rem;
         }
         
-        .sidebar .logo-text {
-            display: none;
+        .nav-item {
+            margin: 0.5rem;
+            padding: 0.75rem !important;
+            justify-content: center;
         }
         
-        .sidebar.expanded .logo-text {
-            display: block;
+        .sidebar.expanded .nav-item {
+            justify-content: flex-start;
+            padding: 0.75rem 1rem !important;
         }
         
-        .sidebar .nav-item-text {
-            display: none;
+        .nav-item-text {
+            white-space: nowrap;
+            opacity: 0;
+            transition: opacity 0.2s ease;
         }
         
         .sidebar.expanded .nav-item-text {
-            display: block;
+            opacity: 1;
         }
         
-        .sidebar .nav-item-badge {
-            position: absolute;
-            top: 0.5rem;
-            right: 0.5rem;
+        .nav-item-badge {
+            display: none;
         }
         
         .sidebar.expanded .nav-item-badge {
-            position: static;
-            margin-left: auto;
+            display: flex;
         }
         
         /* Header */
