@@ -8,71 +8,71 @@
             </a>
 
             {{-- MENU UTAMA (Desktop) --}}
-                        <div class="hidden md:flex space-x-6 lg:space-x-8 items-center">
-                            <a href="{{ route('home') }}" 
-                               @class([
-                                   'py-2 text-sm font-medium transition-all border-b-2',
-                                   'text-slate-900 border-slate-800' => request()->routeIs('home'), 
-                                   'text-slate-600 border-transparent hover:text-slate-800 hover:border-slate-800' => !request()->routeIs('home'),
-                               ])>
-                               HOME
-                            </a>
-                
-                            <a href="{{ route('catalogue.index') }}"
-                               @class([
-                                   'py-2 text-sm font-medium transition-all border-b-2',
-                                   'text-slate-900 border-slate-800' => request()->routeIs('catalogue.*'), 
-                                   'text-slate-600 border-transparent hover:text-slate-800 hover:border-slate-800' => !request()->routeIs('catalogue.*'),
-                               ])>
-                               CATALOGUE
-                            </a>
+            <div class="hidden md:flex space-x-6 lg:space-x-8 items-center">
+                <a href="{{ route('home') }}" 
+                   @class([
+                       'py-2 text-sm font-medium transition-all border-b-2',
+                       'text-slate-900 border-slate-800' => request()->routeIs('home'), 
+                       'text-slate-600 border-transparent hover:text-slate-800 hover:border-slate-800' => !request()->routeIs('home'),
+                   ])>
+                   HOME
+                </a>
+    
+                <a href="{{ route('catalogue.index') }}"
+                   @class([
+                       'py-2 text-sm font-medium transition-all border-b-2',
+                       'text-slate-900 border-slate-800' => request()->routeIs('catalogue.*'), 
+                       'text-slate-600 border-transparent hover:text-slate-800 hover:border-slate-800' => !request()->routeIs('catalogue.*'),
+                   ])>
+                   CATALOGUE
+                </a>
 
-                             <a href="{{ route('new-arrivals' )}}" 
-                                @class([
-                                    'py-2 text-sm font-medium transition-all border-b-2',
-                                    'text-slate-900 border-slate-800' => request()->routeIs('new-arrivals'), 
-                                    'text-slate-600 border-transparent hover:text-slate-800 hover:border-slate-800' => !request()->routeIs('new-arrivals'),
-                                ])>
-                                NEW ARRIVALS
-                            </a>
+                 <a href="{{ route('new-arrivals' )}}" 
+                    @class([
+                        'py-2 text-sm font-medium transition-all border-b-2',
+                        'text-slate-900 border-slate-800' => request()->routeIs('new-arrivals'), 
+                        'text-slate-600 border-transparent hover:text-slate-800 hover:border-slate-800' => !request()->routeIs('new-arrivals'),
+                    ])>
+                    NEW ARRIVALS
+                </a>
 
-                             <a href="{{ route('contact.index') }}" 
-                            @class([
-                                'py-2 text-sm font-medium transition-all border-b-2',
-                                'text-slate-900 border-slate-800' => request()->routeIs('contact.index'),
-                                'text-slate-600 border-transparent hover:text-slate-800 hover:border-slate-800' => !request()->routeIs('contact.index'),
-                                ])>
-                                CONTACT
+                 <a href="{{ route('contact.index') }}" 
+                    @class([
+                        'py-2 text-sm font-medium transition-all border-b-2 relative',
+                        'text-slate-900 border-slate-800' => request()->routeIs('contact.index'),
+                        'text-slate-600 border-transparent hover:text-slate-800 hover:border-slate-800' => !request()->routeIs('contact.index'),
+                    ])>
+                    CONTACT
 
-                                @if(isset($customerUnreadCount) && $customerUnreadCount > 0)
-                                    <span class="absolute -top-2 -right-3 bg-red-500 text-white text-[10px] font-bold w-5 h-5 flex items-center justify-center rounded-full">
-                                        {{ $customerUnreadCount }}
-                                    </span>
-                                @endif
-                            </a>
-                        </div>
+                    @if(isset($customerUnreadCount) && $customerUnreadCount > 0)
+                        <span class="absolute -top-2 -right-3 bg-red-500 text-white text-[10px] font-bold w-5 h-5 flex items-center justify-center rounded-full">
+                            {{ $customerUnreadCount }}
+                        </span>
+                    @endif
+                </a>
+            </div>
 
-                        {{-- MOBILE MENU BUTTON --}}
-                        <div class="md:hidden">
-                            <button @click="mobileMenu = !mobileMenu" class="text-slate-500 hover:text-slate-800 focus:outline-none">
-                                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7"></path>
-                                </svg>
-                            </button>
-                        </div>
+            {{-- MOBILE MENU BUTTON --}}
+            <div class="md:hidden flex items-center">
+                <button @click="mobileMenu = !mobileMenu" class="text-slate-500 hover:text-slate-800 focus:outline-none">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7"></path>
+                    </svg>
+                </button>
+            </div>
 
-                        {{-- MOBILE MENU DROPDOWN --}}
-                        <div x-show="mobileMenu" 
-                             x-cloak
-                             @click.away="mobileMenu = false"
-                             class="absolute top-16 left-0 w-full bg-white shadow-lg border-t border-gray-100 z-50 md:hidden p-4 space-y-4">
-                             <a href="{{ route('home') }}" class="block text-slate-600 hover:text-slate-900">HOME</a>
-                             <a href="{{ route('catalogue.index') }}" class="block text-slate-600 hover:text-slate-900">CATALOGUE</a>
-                             <a href="{{ route('new-arrivals') }}" class="block text-slate-600 hover:text-slate-900">NEW ARRIVALS</a>
-                             <a href="{{ route('contact.index') }}" class="block text-slate-600 hover:text-slate-900">CONTACT</a>
-                             <a href="{{ route('about.index') }}" class="block text-slate-600 hover:text-slate-900">ABOUT</a>
-                             <a href="{{ route('faq.index') }}" class="block text-slate-600 hover:text-slate-900">FAQ</a>
-                        </div>
+            {{-- MOBILE MENU DROPDOWN --}}
+            <div x-show="mobileMenu" 
+                 x-cloak
+                 @click.away="mobileMenu = false"
+                 class="absolute top-16 left-0 w-full bg-white shadow-lg border-t border-gray-100 z-50 md:hidden p-4 space-y-4">
+                 <a href="{{ route('home') }}" class="block text-slate-600 hover:text-slate-900">HOME</a>
+                 <a href="{{ route('catalogue.index') }}" class="block text-slate-600 hover:text-slate-900">CATALOGUE</a>
+                 <a href="{{ route('new-arrivals') }}" class="block text-slate-600 hover:text-slate-900">NEW ARRIVALS</a>
+                 <a href="{{ route('contact.index') }}" class="block text-slate-600 hover:text-slate-900">CONTACT</a>
+                 <a href="{{ route('about.index') }}" class="block text-slate-600 hover:text-slate-900">ABOUT</a>
+                 <a href="{{ route('faq.index') }}" class="block text-slate-600 hover:text-slate-900">FAQ</a>
+            </div>
 
             {{-- IKON KANAN --}}
             <div class="flex space-x-5 items-center">
@@ -129,6 +129,11 @@
                                 </div>
 
                                 <a href="{{ route('profile.edit') }}" @click="open = false" class="block px-4 py-2 text-sm text-slate-700 hover:bg-slate-100 hover:text-slate-900">Edit Profile</a>
+                                
+                                @if(auth()->user()->role === 'admin' || auth()->user()->role === 'superadmin')
+                                    <a href="{{ route('admin.dashboard') }}" class="block px-4 py-2 text-sm text-blue-600 font-bold hover:bg-slate-100">Admin Panel</a>
+                                @endif
+
                                 <form id="logout-form" method="POST" action="{{ route('logout') }}" style="display: none;"> @csrf </form>
                                 <button type="button" @click="logout()" class="block w-full px-4 py-2 text-left text-sm text-slate-700 hover:bg-slate-100 hover:text-slate-900">Logout</button>
                             </div>
